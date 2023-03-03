@@ -9,42 +9,44 @@ knitr_has_yaml_chunk_options <- function() {
 # only works w/ htmltools >= 0.5.0.9003 so overwrite in the meantime
 options(htmltools.preserve.raw = TRUE)
 
+# Quarto internal: Patch htmltools::htmlPreserve
 htmlPreserve <- function(x) {
-  x <- paste(x, collapse = "\n")
-  if (nzchar(x)) {
+  x <- base::paste(x, collapse = "\n")
+  if (base::nzchar(x)) {
     # use fenced code block if there are embedded newlines
-    if (grepl("\n", x, fixed = TRUE))
-      sprintf("\n```{=html}\n%s\n```\n", x)
+    if (base::grepl("\n", x, fixed = TRUE))
+      base::sprintf("\n```{=html}\n%s\n```\n", x)
     # otherwise use inline span
     else
-      sprintf("`%s`{=html}", x)
+      base::sprintf("`%s`{=html}", x)
   } else {
     x
   }
 }
-assignInNamespace("htmlPreserve", htmlPreserve, ns = "htmltools")
+utils::assignInNamespace("htmlPreserve", htmlPreserve, ns = "htmltools")
 
+# Backward compatibility for older knitr
 if (!knitr_has_yaml_chunk_options()) {
   # override parse_block to assign chunk labels from yaml options
   knitr_parse_block <- knitr:::parse_block
-  parse_block = function(code, header, params.src, markdown_mode = out_format('markdown')) {
+  parse_block <- function(code, header, params.src, markdown_mode = knitr:::out_format('markdown')) {
     originalParamsSrc <- params.src
-    engine = sub('^([a-zA-Z0-9_]+).*$', '\\1', params.src)
+    engine <- base::sub('^([a-zA-Z0-9_]+).*$', '\\1', params.src)
     partitioned <- partition_yaml_options(engine, code)
-    params = sub('^([a-zA-Z0-9_]+)', '', params.src)
+    params <- base::sub('^([a-zA-Z0-9_]+)', '', params.src)
     params <- knitr:::parse_params(params)
     unnamed_label <- knitr::opts_knit$get('unnamed.chunk.label')
-    if (startsWith(params$label, unnamed_label)) {
+    if (base::startsWith(params$label, unnamed_label)) {
       label <- partitioned$yaml[["label"]] %||% partitioned$yaml[["id"]]
-      if (!is.null(label)) {
-        params.src <- sub("^[a-zA-Z0-9_]+ *[ ,]?", 
-                          paste0(engine, " ", label, ", "), 
+      if (!base::is.null(label)) {
+        params.src <- base::sub("^[a-zA-Z0-9_]+ *[ ,]?", 
+                          base::paste0(engine, " ", label, ", "), 
                           params.src)
       }
     } 
     
     # strip trailing comma and whitespace
-    params.src <- sub("\\s*,?\\s*$", "", params.src)
+    params.src <- base::sub("\\s*,?\\s*$", "", params.src)
     
     # look for other options to forward. note that ideally we could extract *all*
     # parameters and then pass partitioned$code below, however we can construct
@@ -54,29 +56,29 @@ if (!knitr_has_yaml_chunk_options()) {
     # of textual option forwarding that don't run into newlines 
     extra_opts <- list()
     for (opt in c("ref.label", "ref-label")) {
-      if (!is.null(partitioned$yaml[[opt]])) {
+      if (!base::is.null(partitioned$yaml[[opt]])) {
         value <- partitioned$yaml[[opt]]
-        opt <- sub("-", ".", opt)
-        extra_opts[[opt]] <- paste(gsub("\n", " ", deparse(value, 
+        opt <- base::sub("-", ".", opt)
+        extra_opts[[opt]] <- base::paste(base::gsub("\n", " ", deparse(value, 
                                                            width.cutoff = 500, 
                                                            nlines = 1), fixed = TRUE), 
                                    collapse = " ") 
       }
     }
-    if (length(extra_opts) > 0) {
-      extra_opts <- paste(paste0(names(extra_opts), "=", as.character(extra_opts), ", "), 
+    if (base::length(extra_opts) > 0) {
+      extra_opts <- base::paste(base::paste0(names(extra_opts), "=", base::as.character(extra_opts), ", "), 
                           collapse = "")
-      params.src <- paste0(params.src, ", ", sub(",\\s*$", "", extra_opts))
+      params.src <- base::paste0(params.src, ", ", base::sub(",\\s*$", "", extra_opts))
     }
     
     # proceed
     block <- knitr_parse_block(code, header, params.src, markdown_mode)
     block[["params"]][["original.params.src"]] <- originalParamsSrc
-    block[["params"]][["chunk.echo"]] <- isTRUE(params[["echo"]]) || 
-      isTRUE(partitioned$yaml[["echo"]])
+    block[["params"]][["chunk.echo"]] <- base::isTRUE(params[["echo"]]) || 
+      base::isTRUE(partitioned$yaml[["echo"]])
     block
   }
-  assignInNamespace("parse_block", parse_block, ns = "knitr")
+  utils::assignInNamespace("parse_block", parse_block, ns = "knitr")
 }
 
 # override wrapping behavior for knitr_asis output (including htmlwidgets)
@@ -84,38 +86,39 @@ if (!knitr_has_yaml_chunk_options()) {
 wrap_asis_output <- function(options, x) {
 
   # if the options are empty then this is inline output, return unmodified
-  if (length(options) == 0) {
+  if (base::length(options) == 0) {
     return(x)
   }
 
   # generate output div
   caption <- figure_cap(options)[[1]]
-  if (nzchar(caption)) {
-    x <- paste0(x, "\n\n", caption)
+  if (base::nzchar(caption)) {
+    x <- base::paste0(x, "\n\n", caption)
   }
-  classes <- paste0("cell-output-display")
-  if (isTRUE(options[["output.hidden"]]))
-    classes <- paste0(classes, " .hidden")
+  classes <- base::paste0("cell-output-display")
+  if (base::isTRUE(options[["output.hidden"]])) {
+    classes <- base::paste0(classes, " .hidden")
+  }
   
   # if this is an html table then wrap it further in ```{=html}
   # (necessary b/c we no longer do this by overriding kable_html,
   # which is in turn necessary to allow kableExtra to parse
   # the return value of kable_html as valid xml)
-  if (grepl("^<\\w+[ >]", x) && grepl("<\\/\\w+>\\s*$", x) && 
-      !grepl('^<div class="kable-table">', x)) {
-    x <- paste0("`````{=html}\n", x, "\n`````")
+  if (base::grepl("^<\\w+[ >]", x) && base::grepl("<\\/\\w+>\\s*$", x) && 
+      !base::grepl('^<div class="kable-table">', x)) {
+    x <- base::paste0("`````{=html}\n", x, "\n`````")
   }
   
   output_div(x, output_label_placeholder(options), classes)
 }
 add_html_caption <- function(options, x) {
-  if (inherits(x, 'knit_asis_htmlwidget')) {
+  if (base::inherits(x, 'knit_asis_htmlwidget')) {
     wrap_asis_output(options, x)
   } else {
     x
   }
 }
-assignInNamespace("add_html_caption", add_html_caption, ns = "knitr")
+utils::assignInNamespace("add_html_caption", add_html_caption, ns = "knitr")
 
 # wrap was renamed to sew in 1.32.8. 
 if (utils::packageVersion("knitr") >= "1.32.8") {
@@ -123,20 +126,20 @@ if (utils::packageVersion("knitr") >= "1.32.8") {
   sew <- function(x, options = list(), ...) {
 
     # some sew s3 methods take the default chunk options
-    if (missing(options) && 
-        inherits(x, c("knit_image_paths", "html_screenshot", "knit_embed_url"))) {
+    if (base::missing(options) && 
+        base::inherits(x, c("knit_image_paths", "html_screenshot", "knit_embed_url"))) {
       options <- knitr::opts_chunk$get()
     }
 
-    if (inherits(x, "knit_image_paths")) {
+    if (base::inherits(x, "knit_image_paths")) {
       knitr:::sew.knit_image_paths(x, options, ...)
-    } else if (inherits(x, "knit_asis")) {
+    } else if (base::inherits(x, "knit_asis")) {
       # delegate
-      is_html_widget <- inherits(x, "knit_asis_htmlwidget")
+      is_html_widget <- base::inherits(x, "knit_asis_htmlwidget")
       # knit_asis method checks on missing options which 
       # it gets in knitr because UseMethod() is called in generic
       # but here we pass our default empty list options
-      x <- if (missing(options)) {
+      x <- if (base::missing(options)) {
         knitr:::sew.knit_asis(x, ...)
       } else {
         knitr:::sew.knit_asis(x, options, ...)
@@ -152,25 +155,25 @@ if (utils::packageVersion("knitr") >= "1.32.8") {
     
     # this used to be completely generic, however R 3.4 wasn't able to
     # dispatch correctly via UseMethod so we do manual binding
-    } else if (inherits(x, "character")) {
+    } else if (base::inherits(x, "character")) {
       knitr:::sew.character(x, options, ...)
-    } else if (inherits(x, "html_screenshot")) {
+    } else if (base::inherits(x, "html_screenshot")) {
       knitr:::sew.html_screenshot(x, options, ...)
-    } else if (inherits(x, "knit_embed_url")) {
+    } else if (base::inherits(x, "knit_embed_url")) {
       knitr:::sew.knit_embed_url(x, options, ...)
-    } else if (inherits(x, "source")) {
+    } else if (base::inherits(x, "source")) {
       knitr:::sew.source(x, options, ...)
-    } else if (inherits(x, "warning")) {
+    } else if (base::inherits(x, "warning")) {
       knitr:::sew.warning(x, options, ...)
-    } else if (inherits(x, "message")) {
+    } else if (base::inherits(x, "message")) {
       knitr:::sew.message(x, options, ...)
-    } else if (inherits(x, "error")) {
+    } else if (base::inherits(x, "error")) {
       knitr:::sew.error(x, options, ...)
-    } else if (inherits(x, "list")) {
+    } else if (base::inherits(x, "list")) {
       knitr:::sew.list(x, options, ...)
-    } else if (inherits(x, "recordedplot")) {
+    } else if (base::inherits(x, "recordedplot")) {
       knitr:::sew.recordedplot(x, options, ...)
-    } else if (inherits(x, "rglRecordedplot") && requireNamespace("rgl")) {
+    } else if (base::inherits(x, "rglRecordedplot") && base::requireNamespace("rgl")) {
       rgl:::sew.rglRecordedplot(x, options, ...)
     } else {
       # this works generically for recent versions of R however
@@ -178,16 +181,15 @@ if (utils::packageVersion("knitr") >= "1.32.8") {
       knitr_sew(x, options, ...)
     }
   }
-  assignInNamespace("sew", sew, ns = "knitr")  
+  utils::assignInNamespace("sew", sew, ns = "knitr")  
 } else {
   knitr_wrap <- knitr:::wrap
   wrap <- function(x, options = list(), ...) {
-    
-    if (inherits(x, "knit_image_paths")) {
+    if (base::inherits(x, "knit_image_paths")) {
       knitr:::wrap.knit_image_paths(x, options, ...)
-    } else if (inherits(x, "knit_asis")) {
+    } else if (base::inherits(x, "knit_asis")) {
       # delegate
-      is_html_widget <- inherits(x, "knit_asis_htmlwidget")
+      is_html_widget <- base::inherits(x, "knit_asis_htmlwidget")
       x <- knitr:::wrap.knit_asis(x, options, ...)
 
       # if it's an html widget then it was already wrapped
@@ -200,23 +202,23 @@ if (utils::packageVersion("knitr") >= "1.32.8") {
     
     # this used to be completely generic, however R 3.4 wasn't able to
     # dispatch correctly via UseMethod so we do manual binding
-    } else if (inherits(x, "character")) {
+    } else if (base::inherits(x, "character")) {
       knitr:::wrap.character(x, options, ...)
-    } else if (inherits(x, "html_screenshot")) {
+    } else if (base::inherits(x, "html_screenshot")) {
       knitr:::wrap.html_screenshot(x, options, ...)
-    } else if (inherits(x, "knit_embed_url")) {
+    } else if (base::inherits(x, "knit_embed_url")) {
       knitr:::wrap.knit_embed_url(x, options, ...)
-    } else if (inherits(x, "source")) {
+    } else if (base::inherits(x, "source")) {
       knitr:::wrap.source(x, options, ...)
-    } else if (inherits(x, "warning")) {
+    } else if (base::inherits(x, "warning")) {
       knitr:::wrap.warning(x, options, ...)
-    } else if (inherits(x, "message")) {
+    } else if (base::inherits(x, "message")) {
       knitr:::wrap.message(x, options, ...)
-    } else if (inherits(x, "error")) {
+    } else if (base::inherits(x, "error")) {
       knitr:::wrap.error(x, options, ...)
-    } else if (inherits(x, "list")) {
+    } else if (base::inherits(x, "list")) {
       knitr:::wrap.list(x, options, ...)
-    } else if (inherits(x, "recordedplot")) {
+    } else if (base::inherits(x, "recordedplot")) {
       knitr:::wrap.recordedplot(x, options, ...)
     } else {
       # this works generically for recent versions of R however
@@ -224,13 +226,13 @@ if (utils::packageVersion("knitr") >= "1.32.8") {
       knitr_wrap(x, options, ...)
     }
   }
-  assignInNamespace("wrap", wrap, ns = "knitr")  
+  utils::assignInNamespace("wrap", wrap, ns = "knitr")  
 }
 
 
 # patch knitr_print.knitr_kable to enclose html output in pandoc RawBlock
 knitr_raw_block <- function(x, format) {
-  knitr::asis_output(paste0("\n\n```{=", format, "}\n", x, "\n```\n\n"))
+  knitr::asis_output(base::paste0("\n\n```{=", format, "}\n", x, "\n```\n\n"))
 }
 knitr_kable_html <- knitr:::kable_html
 kable_html <- function(...) {
@@ -249,16 +251,16 @@ kable_html <- function(...) {
 # pandoc will successfully parse the RawBlock into it's AST so we won't lose
 # any functionality (e.g. crossref table caption handling)
 
-# assignInNamespace("kable_html", kable_html, ns = "knitr")
+# utils::assignInNamespace("kable_html", kable_html, ns = "knitr")
 
 
 
 # patch knitr:::valid_path to remove # prefix and colons from file names
 knitr_valid_path <- knitr:::valid_path
 valid_path = function(prefix, label) {
-  label <- sub("^#", "", label)
+  label <- base::sub("^#", "", label)
   path <- knitr_valid_path(prefix, label)
-  gsub(":", "-", path, fixed = TRUE)
+  base::gsub(":", "-", path, fixed = TRUE)
 }
-assignInNamespace("valid_path", valid_path, ns = "knitr")
+utils::assignInNamespace("valid_path", valid_path, ns = "knitr")
 
