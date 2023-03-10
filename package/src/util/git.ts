@@ -90,7 +90,7 @@ async function clone(workingDir: string, url: string) {
 }
 
 
-export async function applyGitPatches(patches: string[]) {
+export async function applyGitPatches(patches: string[], root?: string) {
   if (!patches) return undefined
   info(`Applying Git patches...`);
   Promise.all(
@@ -99,10 +99,12 @@ export async function applyGitPatches(patches: string[]) {
       const gitCmd: string[] = [];
       gitCmd.push("git");
       gitCmd.push("apply");
+      gitCmd.push("--whitespace=fix");
       gitCmd.push(patch);
       const p = Deno.run({
         cmd: gitCmd,
         stderr: "piped",
+        cwd: root
       });
       const status = await p.status();
       if (status.code !== 0) {

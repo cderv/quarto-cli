@@ -1,0 +1,32 @@
+diff --git a/src/resources/formats/html/pandoc/styles.html b/src/resources/formats/html/pandoc/styles.html
+index 5e70a7bb3..909edcb01 100644
+--- a/src/resources/formats/html/pandoc/styles.html
++++ b/src/resources/formats/html/pandoc/styles.html
+@@ -79,6 +79,18 @@ ol, ul {
+ li > ol, li > ul {
+   margin-top: 0;
+ }
++ul > li:not(:has(> p)) > ul,
++ol > li:not(:has(> p)) > ul,
++ul > li:not(:has(> p)) > ol,
++ol > li:not(:has(> p)) > ol {
++  margin-bottom: 0;
++}
++ul > li:not(:has(> p)) > ul > li:has(> p),
++ol > li:not(:has(> p)) > ul > li:has(> p),
++ul > li:not(:has(> p)) > ol > li:has(> p),
++ol > li:not(:has(> p)) > ol > li:has(> p) {
++  margin-top: 1rem;
++}
+ blockquote {
+   margin: 1em 0 1em 1.7em;
+   padding-left: 1em;
+@@ -179,7 +191,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ ul.task-list{list-style: none;}
+ ul.task-list li input[type="checkbox"] {
+   width: 0.8em;
+-  margin: 0 0.8em 0.2em -1.6em;
++  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
+   vertical-align: middle;
+ }
+ $if(quotes)$

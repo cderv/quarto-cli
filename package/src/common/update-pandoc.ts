@@ -19,7 +19,7 @@ import { pandoc } from "./dependencies/pandoc.ts";
 import { archiveBinaryDependency } from "./archive-binary-dependencies.ts";
 
 import { configureDependency } from "./dependencies/dependencies.ts";
-import { download, unzip } from "../util/utils.ts";
+import { download } from "../util/utils.ts";
 import {
   pandocListFormatDefaultExtensions,
   pandocListFormats,
@@ -32,6 +32,8 @@ import {
 } from "../../../src/core/lib/external/colors.ts";
 
 import * as ld from "../../../src/core/lodash.ts";
+import { applyGitPatches } from "../util/git.ts";
+import { unzip } from "../../../src/core/zip.ts";
 
 export function updatePandoc() {
   return new Command()
@@ -235,6 +237,15 @@ async function writePandocTemplates(
       );
     }
   }
+
+  // Apply patches
+  const patches = [
+    "0001-pandoc-html-styles.patch"
+  ]
+  applyGitPatches(
+    patches.map(e => {return join(config.directoryInfo.pkg, "src", "common", "patches", e)}), 
+    config.directoryInfo.root
+  )
 
   info("done.");
   info("");

@@ -9,8 +9,8 @@ import { isWindows } from "./platform.ts";
 import { execProcess } from "./process.ts";
 import { safeWindowsExec } from "./windows.ts";
 
-export function unzip(file: string) {
-  const dir = dirname(file);
+export function unzip(file: string, dest?: string) {
+  const dir = dest ?? dirname(file);
 
   if (file.endsWith("zip")) {
     // It's a zip file
@@ -34,7 +34,7 @@ export function unzip(file: string) {
     } else {
       // Use the built in unzip command
       return execProcess(
-        { cmd: ["unzip", "-o", file], cwd: dir, stdout: "piped" },
+        { cmd: ["unzip", "-o", file, "-d", dir], cwd: dir, stdout: "piped" },
       );
     }
   } else {
