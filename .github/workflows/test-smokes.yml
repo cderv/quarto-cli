@@ -33,11 +33,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # only run timed tests on Linux
-        - os: ubuntu-latest
-          time-test: ${{ inputs.time-test == true && true || false }}
-        - os: windows-lates
-          time-test: false
+        include:
+          # only run timed tests on Linux
+          - os: ubuntu-latest
+            time-test: ${{ inputs.time-test }}
+          - os: windows-latest
+            time-test: false
     runs-on: ${{ matrix.os }}
     env:
       QUARTO_TESTS_FORCE_NO_PIPENV: true
