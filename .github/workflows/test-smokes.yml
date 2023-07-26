@@ -35,7 +35,7 @@ jobs:
       matrix:
         # only run timed tests on Linux
         - os: ubuntu-latest
-          time-test: ${{ inputs.time-test }}
+          time-test: ${{ inputs.time-test == true && true || false }}
         - os: windows-lates
           time-test: false
     runs-on: ${{ matrix.os }}
