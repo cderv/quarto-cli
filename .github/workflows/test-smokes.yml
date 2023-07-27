@@ -245,7 +245,7 @@ jobs:
             Please review and merge to trigger a new build of the website.
 
       - name: Check auto PR outputs
-        needs: cpr
+        if: steps.cpr.outcome == 'success'
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
