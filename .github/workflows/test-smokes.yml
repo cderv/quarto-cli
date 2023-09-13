@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [unbuntu-latest, windows-latest]
         time-test:
           - ${{ inputs.time-test }}
         exclude:
@@ -42,8 +42,6 @@ jobs:
           - os: windows-latest
             time-test: true
     runs-on: ${{ matrix.os }}
-    env:
-      QUARTO_TESTS_FORCE_NO_PIPENV: true
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -66,3 +64,6 @@ jobs:
 
       - run: ./configure.cmd
         shell: pwsh
+
+      - run: ./run-test.ps1 docs/smoke-all/jupyter/inline-execution-jupyter.qmd
+        working-directory: tests
