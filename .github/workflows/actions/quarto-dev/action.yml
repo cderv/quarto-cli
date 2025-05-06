@@ -20,6 +20,9 @@ runs:
         # install with symlink in /usr/local/bin which in PATH on CI
         ./configure.sh
 
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+
     - name: Configure Quarto (.ps1)
       if: runner.os == 'Windows'
       shell: pwsh
