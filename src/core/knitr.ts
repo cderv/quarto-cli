@@ -121,24 +121,25 @@ export async function knitrCapabilities(rBin: string | undefined) {
       // Check if this is x64 R on Windows ARM
       if (result.stdout) {
         try {
-          const yamlMatch = result.stdout.match(/--- YAML_START ---(.*)--- YAML_END ---/s);
+          const yamlMatch = result.stdout.match(
+            /--- YAML_START ---(.*)--- YAML_END ---/s,
+          );
           if (yamlMatch) {
             const yamlLines = yamlMatch[1];
             const caps = readYamlFromString(yamlLines) as KnitrCapabilities;
 
             if (caps.platform) {
               const isWindowsArm = isWindows && Deno.build.arch === "aarch64";
-              const isX64R = caps.platform.includes("x86_64") || caps.platform.includes("i386");
+              const isX64R = caps.platform.includes("x86_64") ||
+                caps.platform.includes("i386");
 
               if (isWindowsArm && isX64R) {
                 throw new Error(
                   "x64 R detected on Windows ARM.\n\n" +
-                  "x64 R runs under emulation and is not reliable for Quarto.\n" +
-                  "Please install native ARM64 R:\n" +
-                  "  Download: https://www.r-project.org/nosvn/winutf8/aarch64/R-4-signed/\n" +
-                  "  RTools: https://cran.r-project.org/bin/windows/Rtools/rtools45/files/\n\n" +
-                  "After installation, set QUARTO_R environment variable:\n" +
-                  "  set QUARTO_R=C:\\Program Files\\R-aarch64\\R-4.5.0\\bin\\Rscript.exe"
+                    "x64 R runs under emulation and is not reliable for Quarto.\n" +
+                    "Please install native ARM64 R. \n" +
+                    "Read about R on 64-bit Windows ARM at https://blog.r-project.org/2024/04/23/r-on-64-bit-arm-windows/\n" +
+                    "After installation, set QUARTO_R environment variable if the correct version is not correctly found.",
                 );
               }
             }
@@ -181,10 +182,13 @@ export function knitrCapabilitiesMessage(caps: KnitrCapabilities, indent = "") {
 
     // Check for x64 R on Windows ARM and show warning
     const isWindowsArm = isWindows && Deno.build.arch === "aarch64";
-    const isX64R = caps.platform.includes("x86_64") || caps.platform.includes("i386");
+    const isX64R = caps.platform.includes("x86_64") ||
+      caps.platform.includes("i386");
     if (isWindowsArm && isX64R) {
       lines.push(`⚠️  WARNING: x64 R on Windows ARM is not supported`);
-      lines.push(`    Install ARM64 R: https://www.r-project.org/nosvn/winutf8/aarch64/R-4-signed/`);
+      lines.push(
+        `    Install ARM64 R: https://www.r-project.org/nosvn/winutf8/aarch64/R-4-signed/`,
+      );
     }
   }
 
