@@ -107,6 +107,25 @@ export async function knitrCapabilities(rBin: string | undefined) {
           Object.values(pkgVersRequirement["rmarkdown"]).join(" "),
         )
         : false;
+
+      // Check for x64 R on Windows ARM even when capabilities check succeeds
+      // x64 R under emulation is intermittently unstable and will crash unpredictably
+      if (caps.platform) {
+        const isWindowsArm = isWindows && Deno.build.arch === "aarch64";
+        const isX64R = caps.platform.includes("x86_64") ||
+          caps.platform.includes("i386");
+
+        if (isWindowsArm && isX64R) {
+          throw new Error(
+            "x64 R detected on Windows ARM.\n\n" +
+              "x64 R runs under emulation and is not reliable for Quarto.\n" +
+              "Please install native ARM64 R. \n" +
+              "Read about R on 64-bit Windows ARM at https://blog.r-project.org/2024/04/23/r-on-64-bit-arm-windows/\n" +
+              "After installation, set QUARTO_R environment variable if the correct version is not correctly found.",
+          );
+        }
+      }
+
       return caps;
     } else {
       debug("\n++ Problem with results of knitr capabilities check.");
