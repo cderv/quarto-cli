@@ -70,6 +70,12 @@ export async function checkRBinary() {
   }
 }
 
+export class WindowsArmX64RError extends Error {
+  constructor(msg: string) {
+    super(msg);
+  }
+}
+
 function checkWindowsArmR(platform: string | undefined): void {
   if (!platform) return;
 
@@ -77,7 +83,7 @@ function checkWindowsArmR(platform: string | undefined): void {
   const isX64R = platform.includes("x86_64") || platform.includes("i386");
 
   if (isWindowsArm && isX64R) {
-    throw new Error(
+    throw new WindowsArmX64RError(
       "x64 R detected on Windows ARM.\n\n" +
         "x64 R runs under emulation and is not reliable for Quarto.\n" +
         "Please install native ARM64 R. \n" +
@@ -150,7 +156,7 @@ export async function knitrCapabilities(rBin: string | undefined) {
           }
         } catch (e) {
           // If it's our specific x64-on-ARM error, rethrow it
-          if (e instanceof Error && e.message.includes("x64 R detected")) {
+          if (e instanceof WindowsArmX64RError) {
             throw e;
           }
           // Otherwise YAML parse failed, continue to return undefined
@@ -162,7 +168,7 @@ export async function knitrCapabilities(rBin: string | undefined) {
     }
   } catch (e) {
     // Rethrow x64-on-ARM errors - these have helpful messages
-    if (e instanceof Error && e.message.includes("x64 R detected")) {
+    if (e instanceof WindowsArmX64RError) {
       throw e;
     }
     debug(
