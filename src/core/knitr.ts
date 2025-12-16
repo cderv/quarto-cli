@@ -131,7 +131,6 @@ export async function knitrCapabilities(rBin: string | undefined) {
         )
         : false;
 
-      checkWindowsArmR(caps.platform);
       return caps;
     } else {
       debug("\n++ Problem with results of knitr capabilities check.");
