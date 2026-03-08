@@ -117,6 +117,84 @@ Longer-running items that need planning, not just coding.
 6. **Pull Future items to v1.10** as capacity allows (especially Windows bugs)
 
 ---
+
+## Future Milestone: Triage & Context (1,354 issues)
+
+The Future milestone is the deferred backlog. Many items were postponed from earlier releases, some have active workarounds, and some are blocked upstream. This section helps decide **what to pull into v1.10** and what to leave.
+
+### Triage-Back Candidates (pull to v1.10)
+
+These Future items are actionable now — root cause identified, team considers them priority, or small enough to just do.
+
+| # | +1 | Title | Why now |
+|---|-----|-------|---------|
+| #5961 | 17 | TOC only visible in wide desktop | Root cause identified (overly broad CSS rule), cderv diagnosed it, scoped fix. Affects all mobile users. |
+| #11475 | 9 | Preview not updating after autoreload | cscheid: "We consider this a priority." Affects daily workflows, related to preview architecture work. |
+| #5036 | 6 | QED symbol at end of proof | Assigned to cderv, zero comments = just needs doing. Small Lua/CSS/LaTeX tweak. |
+| #11800 | 4 | Customize TinyTeX install directory | Already milestoned v1.10, cderv actively engaged (Mar 2025). |
+| #5301 | 10 | Other git hosts for GitHub Links | mcanouil mapped all changes needed (Dec 2025). Affects all non-GitHub users. |
+
+### Maybe — Needs Decision or Design
+
+These are high-value but need a decision before committing.
+
+| # | +1 | Title | Blocker / Decision needed |
+|---|-----|-------|---------------------------|
+| #844 | 24 | Custom callout boxes | Lua API exists, extensions work. Decision: add YAML-based callout definition? |
+| #4677 | 20 | PDF export for revealjs (decktape) | cderv: "we'll tackle revealjs work next version" (said during 1.4). Workarounds exist. Decision: bundle decktape/playwright? |
+| #5827 | 18 | Extension install from private GitLab | Enterprise need. Decision: pass git credentials through `quarto add`? mcanouil's Quarto Wizard covers GitHub only. |
+| #6741 | 17 | Paired light/dark themes | cderv tracking (Dec 2025). Depends on Bootstrap 5.3+ integration. |
+| #419 | 16 | Dropdown tabset panels | dragonstyle was supportive, Bootstrap infra exists. Needs someone to pick up the PR. |
+| #4944 | 7 | Crossref Overhaul (remaining items) | Major work landed in v1.4. Remaining: label formatting, glossary, theorem crossrefs. Incremental items could land. |
+| #4197 | 0 | Deno memory in limited environments | Upstream Deno PR exists. If it lands, Quarto just upgrades Deno. 59 comments of pain. |
+
+### Explicitly Deferred — Don't Pull
+
+These were discussed and deliberately left in Future. Don't waste time on them for v1.10.
+
+| # | +1 | Title | Why deferred |
+|---|-----|-------|--------------|
+| #474 | 11 | Version selector for websites/books | cscheid (Nov 2024): "unlikely to implement in foreseeable future" — team decided against it. |
+| #1585 | 15 | Backlinks in website output | cscheid (Apr 2024): "requires massive changes, at least 1-2 years away." |
+| #2556 | 17 | Books without index.qmd | cscheid: "when there's a fix, there'll be an update." Requires architectural changes. |
+| #2065 | 13 | Pretty URLs | 1 comment in 3+ years, aliases workaround exists. No design work done. |
+| #2908 | 5 | qmd files in book front matter | Deferred multiple times. Workarounds exist for LaTeX. Needs `frontmatter`/`backmatter` in `_quarto.yml`. |
+| #1092 | 8 | Per-cell caching for Python | Blocked on upstream jupyter-cache. No progress on either side. |
+| #1319 | 10 | Broken external link checker | No design work, external tools serve the need. |
+| #3917 | 15 | `quarto create post` | Well-served by community tooling (quartize VS Code extension, quartopost). |
+
+### cderv's Future Backlog (201 issues)
+
+You have 201 issues in Future. Top themes in your backlog:
+
+| Theme | Count | Key issues |
+|-------|-------|------------|
+| **revealjs** | ~40 | #4677 (decktape), #1328 (callout collapse), #4738 (multiplex), #4185 (aside in title slide) |
+| **Windows/file-systems** | ~20 | #8530 (Chinese home dir), #4670 (Dropbox), #2380 (SMB share), #3871 (invalid dir), #1774 (network drive) |
+| **knitr engine** | ~15 | #8717 (prefer-html message), #7752 (julia+knitr), #13597 (embed subplots), #9852 (bash+cache) |
+| **extensions** | ~5 | #5827 (private GitLab), #13384 (create fails without git), #4839 (custom cell handlers) |
+| **lightbox** | 5 | #13419 (absolute positioning), #13356 (new revealjs lightbox), #11727 (caption formatting) |
+| **publishing** | ~10 | #12558 (Confluence 500), #6363 (Confluence mermaid), #12940 (Connect 404), #5997 (gh-pages remote) |
+| **latex/pdf** | ~10 | #13756 (babel+koma), #13862 (subtables), #11571 (raw LaTeX crossref), #9016 (latex-auto-mk) |
+
+### Future Thematic Clusters (all developers)
+
+Largest concentrations of Future issues by area:
+
+| Theme | Future Count | Top unassigned issues |
+|-------|-------------|----------------------|
+| **crossref** | 119 | #1697 Glossary (43+1), #1585 Backlinks (15+1), #5440 Duplicate footnotes (5+1) |
+| **revealjs** | 103 | #11158 code-overflow (5+1), #7378 fragment-index (5+1), #6255 vertical tabsets (5+1) |
+| **latex** | 96 | — most assigned to cscheid |
+| **websites** | 60 | #5961 TOC mobile (17+1), #5301 git hosts (10+1), #4401 sticky navbar (5+1) |
+| **books** | 60 | #2556 no index.qmd (17+1), #10114 announcements (7+1), #474 version selector (11+1) |
+| **engines-jupyter** | 56 | #1092 per-cell cache (8+1), #12507 R scripts via ir kernel (14c) |
+| **tables** | 49 | #1153 table font size (9+1), #7321 flextable+crossref (9+1, cscheid) |
+| **mermaid** | 31 | #9178 dark background (6+1), #9693 DiagrammeR in tabsets (5+1, cscheid) |
+| **typst** | 25 | #9416 space-before-numbering (4+1), #11683 gt font issues (3+1) |
+| **preview** | 30 | #11475 autoreload (9+1), #4841 pre-render (6+1), #10392 project changes (4+1) |
+
+---
 ---
 
 ## Reference: Full Issue Analysis
