@@ -1,14 +1,127 @@
-# Quarto-CLI Upstream Issues Analysis
+# Quarto-CLI v1.10 Work Plan & Issue Analysis
 
 **Date**: 2026-03-08
 **Source**: quarto-dev/quarto-cli (public GitHub)
-**Total open issues (incl PRs)**: 1,714
-**Issues analyzed**: 350+ (top by reactions, comments, regressions, recent)
-**Issues created (last 30 days)**: 30
-**Issues closed (last 30 days)**: 109
-**Close rate**: ~3.6x creation rate (backlog is being reduced)
-**Issues with no comments**: 357 (21%)
-**Issues with no labels**: 2
+**Total open issues (incl PRs)**: 1,714 | **v1.10 milestone**: 351 | **Future**: 1,354
+**Close rate**: ~3.6x creation rate (109 closed vs 30 created last 30 days)
+
+---
+
+## v1.10 Work Plan — cderv
+
+This is the actionable plan for cderv's v1.10 work. Each section is a work stream that can be tackled independently. Items are ordered by priority within each stream.
+
+### Phase 1: Early-in-Release (do first)
+
+These are labeled `early-in-release` — tackle at the start of the release cycle.
+
+| # | Title | Effort | Notes |
+|---|-------|--------|-------|
+| #12104 | Add uv among venv command examples | **Quick** | Docs-only change, 4 reactions |
+| #12476 | Remove console.log from codebase | **Quick** | Unassigned — grep + delete |
+| #11877 | Chrome Headless improvements (epic) | **Large** | Epic — plan subtasks separately |
+| #5766 | Plotly image rendering in GH actions | **Medium** | 2 reactions |
+| #12065 | Contents shortcode with knitr | **Medium** | 1 reaction |
+| #1460 | format-resources not cleaned up | **Medium** | Cleanup logic in render pipeline |
+
+### Phase 2: Regressions (high urgency)
+
+Fix what's broken before building new things. The code-block cluster is unassigned — pick up or coordinate.
+
+**Code Block Regression Cluster** (5 issues, likely 1-2 PRs):
+
+| # | Title | Root Cause |
+|---|-------|------------|
+| #13583 | code-tools broken with code-copy | `code-copy-outer-scaffold` breaks querySelector |
+| #13448 | Code annotation highlight overflow | CSS regression from PR #13429 |
+| #13446 | Code-copy button outside code blocks | CSS positioning in callouts |
+| #13444 | Code-copy overlaps annotation marker | CSS overlap |
+| #13390 | Code blocks in lists: two backgrounds | Reporter provided fix: `background-color: inherit` |
+
+**Other regressions to fix or track:**
+
+| # | Title | Effort | Assignee |
+|---|-------|--------|----------|
+| #13669 | BibTeX copy button missing | **Quick** | Unassigned |
+| #11727 | Lightbox caption formatting | **Medium** | cderv |
+| #12890 | monofont broken since 1.6.27 | **Medium** | cscheid — track |
+| #13450 | Brand causes 3 stylesheets | **Medium** | gordonwoodhull — track |
+
+### Phase 3: cderv Assigned v1.10 Issues
+
+Your existing v1.10 queue, excluding items already listed above.
+
+| # | Title | Effort | Reactions | Notes |
+|---|-------|--------|-----------|-------|
+| #2795 | Preview not updated on included files | **Medium** | 7 | File watcher scope |
+| #13006 | Locked database on shared storage | **Deep** | 0 | 33 comments, SQLite+NFS, needs architecture decision |
+
+### Phase 4: Windows Issues (unassigned, needs cderv)
+
+You're the only Windows developer — these are orphaned without you.
+
+**v1.10:**
+
+| # | Title | Effort |
+|---|-------|--------|
+| #13713 | Prepare Python 3.16 deprecation for windows asyncio | **Medium** |
+
+**Future milestone — candidates to pull into v1.10:**
+
+| # | Title | Effort | Notes |
+|---|-------|--------|-------|
+| #13755 | Windows preview not updating | **Medium** | Recent, likely impactful |
+| #13096 | "Access Denied" on Windows Server | **Medium** | Recent, likely impactful |
+| #12899 | PDF TOC fails / compilation error | **Medium** | windows + latex |
+| #993 | Error with non-ASCII account name | **Medium** | file-systems, old but likely still broken |
+| #3225 | configure.cmd fails with spaces in path | **Quick-Medium** | file-systems |
+| #2800 | WSL rendering bug | **Medium** | file-systems |
+| #8704 | **Epic: windows + file-systems** | **Large** | Umbrella for #993, #3225, #2800 |
+| #3052 | Mermaid PDF hang on Windows | **Medium** | puppeteer-related |
+| #2409 | Sidebar differs Windows vs Linux | **Medium** | enhancement |
+| #1225 | regdmp access denied | **Unknown** | Old — re-test first |
+| #1004 | Mouse hover wrong on revealjs (Win) | **Unknown** | Old — re-test first |
+
+**Recommendation**: Assign yourself #13713, #13755, #13096. Re-test #993, #1225, #1004 on current Quarto — close if fixed, pull to v1.10 if still broken.
+
+### Phase 5: High-Impact v1.10 Features (unassigned)
+
+These are the highest-reaction v1.10 items with no owner. Pick up or help coordinate.
+
+| # | Reactions | Title | Effort |
+|---|-----------|-------|--------|
+| #341 | 37 | Result folding | Medium |
+| #3795 | 32 | Blog listing page navigation | Medium |
+| #376 | 18 | Wrapfigure support | Medium |
+| #4693 | 13 | Code-fold for non-executable blocks | Medium |
+
+### Phase 6: Strategic / Epics
+
+Longer-running items that need planning, not just coding.
+
+| # | Title | Effort | Notes |
+|---|-------|--------|-------|
+| #11877 | Chrome Headless improvements | **Epic** | early-in-release, plan subtasks |
+| #13006 | Locked database on shared storage | **Deep** | Needs architecture decision (SQLite alternatives?) |
+| #8704 | Windows + file-systems epic | **Epic** | Umbrella for Windows path issues |
+
+---
+
+## How to Use This Plan
+
+1. **Pick a phase** — work roughly in order (Phase 1 first)
+2. **For each item** — create a sub-task / branch to investigate and fix
+3. **Quick wins first** within each phase to build momentum
+4. **Re-test old issues** (#993, #1004, #1225) before investing time — they may be fixed
+5. **Track others' items** (cscheid, gordonwoodhull) — don't block on them but stay aware
+6. **Pull Future items to v1.10** as capacity allows (especially Windows bugs)
+
+---
+---
+
+## Reference: Full Issue Analysis
+
+Everything below is supporting data for the plan above.
 
 ---
 
@@ -288,55 +401,7 @@ Issues labeled `early-in-release` are flagged to address early in the release cy
 
 ---
 
-## Unassigned Windows Issues (12 total)
-
-Windows-specific issues with **no assignee** — these typically need a Windows developer (cderv).
-
-### v1.10 milestone (1 issue)
-
-| # | Title | Labels |
-|---|-------|--------|
-| #13713 | Prepare Python 3.16 deprecation for windows asyncio | enhancement, engines-jupyter |
-
-### Future milestone (11 issues)
-
-| # | Title | Labels |
-|---|-------|--------|
-| #13755 | Windows preview not updating | bug, preview |
-| #13096 | "Access Denied" error on Windows Server in "quarto render" | bug |
-| #12899 | PDF renders, but TOC fails / compilation error | bug, windows, latex |
-| #8704 | **Epic: windows + file-systems** | epic |
-| #3225 | configure.cmd fails with spaces in path | bug, windows |
-| #3052 | Hang/error rendering Mermaid to PDF | bug, windows, diagrams-mermaid, puppeteer |
-| #2800 | WSL rendering bug (related to #1131) | bug, windows, file-systems |
-| #2409 | Website sidebar renders differently Windows vs Linux | enhancement |
-| #1225 | regdmp access denied | bug, windows |
-| #1004 | Mouse hover wrong position on revealjs (Windows) | bug, windows, revealjs |
-| #993 | Error with non-ASCII account name in Windows | bug, windows, file-systems |
-
-### Windows Issues Observations
-
-- **3 issues relate to file-system/path handling** (#8704 epic, #2800, #993, #3225) — a recurring Windows pain point
-- **#13755** (preview not updating) and **#13096** (Access Denied) are the **most recent** and likely most impactful
-- **#8704** is an epic that could group several of the file-system issues
-- Several older issues (#993, #1004, #1225) date from 2022 — may need re-testing on current Quarto versions
-
----
-
-## Recommended Work Priorities
-
-### Immediate: Quick Wins (unassigned, clear fixes)
-1. **Code block regression cluster** (#13583, #13448, #13446, #13444, #13390) — 5 CSS/JS fixes, unassigned, likely 1-2 PRs
-2. **Citation copy button** (#13669) — unassigned, simple UI fix
-3. **Remove console.log** (#12476) — unassigned, early-in-release, grep+delete
-4. **Add uv venv docs** (#12104) — assigned to cderv, docs-only
-
-### Short-term: High Impact (v1.10 milestone)
-1. **Result folding** (#341) — 37 reactions, v1.10
-2. **Blog listing pagination** (#3795) — 32 reactions, v1.10, unassigned
-3. **Wrapfigure support** (#376) — 18 reactions, v1.10
-4. **Code-fold for non-executable** (#4693) — 13 reactions, v1.10
-5. **Preview on included files** (#2795) — 7 reactions, v1.10, cderv
+## Recommended Work Priorities (all developers)
 
 ### Medium-term: High Impact (Future milestone, high reactions)
 1. **Glossary support** (#1697) — 49 reactions, Future
@@ -347,9 +412,8 @@ Windows-specific issues with **no assignee** — these typically need a Windows 
 
 ### Strategic (Epics / Architecture)
 1. **Execution Planner** (#6518) — 19 reactions, epic
-2. **Chrome Headless improvements** (#11877) — cderv, early-in-release, v1.10
-3. **PDF rethink** (#7039) — 10 reactions, epic
-4. **Confluence Data Center** (#5072) — 15 reactions, unassigned
+2. **PDF rethink** (#7039) — 10 reactions, epic
+3. **Confluence Data Center** (#5072) — 15 reactions, unassigned
 
 ---
 
