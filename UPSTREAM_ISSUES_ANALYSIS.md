@@ -288,6 +288,41 @@ Issues labeled `early-in-release` are flagged to address early in the release cy
 
 ---
 
+## Unassigned Windows Issues (12 total)
+
+Windows-specific issues with **no assignee** — these typically need a Windows developer (cderv).
+
+### v1.10 milestone (1 issue)
+
+| # | Title | Labels |
+|---|-------|--------|
+| #13713 | Prepare Python 3.16 deprecation for windows asyncio | enhancement, engines-jupyter |
+
+### Future milestone (11 issues)
+
+| # | Title | Labels |
+|---|-------|--------|
+| #13755 | Windows preview not updating | bug, preview |
+| #13096 | "Access Denied" error on Windows Server in "quarto render" | bug |
+| #12899 | PDF renders, but TOC fails / compilation error | bug, windows, latex |
+| #8704 | **Epic: windows + file-systems** | epic |
+| #3225 | configure.cmd fails with spaces in path | bug, windows |
+| #3052 | Hang/error rendering Mermaid to PDF | bug, windows, diagrams-mermaid, puppeteer |
+| #2800 | WSL rendering bug (related to #1131) | bug, windows, file-systems |
+| #2409 | Website sidebar renders differently Windows vs Linux | enhancement |
+| #1225 | regdmp access denied | bug, windows |
+| #1004 | Mouse hover wrong position on revealjs (Windows) | bug, windows, revealjs |
+| #993 | Error with non-ASCII account name in Windows | bug, windows, file-systems |
+
+### Windows Issues Observations
+
+- **3 issues relate to file-system/path handling** (#8704 epic, #2800, #993, #3225) — a recurring Windows pain point
+- **#13755** (preview not updating) and **#13096** (Access Denied) are the **most recent** and likely most impactful
+- **#8704** is an epic that could group several of the file-system issues
+- Several older issues (#993, #1004, #1225) date from 2022 — may need re-testing on current Quarto versions
+
+---
+
 ## Recommended Work Priorities
 
 ### Immediate: Quick Wins (unassigned, clear fixes)
