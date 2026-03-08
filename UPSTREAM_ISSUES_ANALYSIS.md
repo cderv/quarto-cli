@@ -156,32 +156,165 @@ Growing interest as alternative to LaTeX for PDF. Issues span crossrefs, tables,
 
 ---
 
+## Milestones Overview
+
+| Milestone | Open Issues | Description |
+|-----------|------------|-------------|
+| **v1.10** | 351 | Next release — active development target |
+| **Future** | 1,354 | Deferred / longer-term backlog |
+| **v1.9** | 3 | Previous release — nearly closed |
+| **Hot-fix** | 1 | Urgent patch |
+
+The **v1.10 milestone contains 351 issues** — this is the actionable planning scope. The remaining 1,354 are in "Future" (deferred).
+
+---
+
+## Assignee: cderv (278 open issues)
+
+You have **278 open issues assigned**. High-reaction items in your queue:
+
+| # | +1 | Title | Milestone | Quick Win? |
+|---|-----|-------|-----------|------------|
+| #4677 | 20 | PDF export for revealjs (decktape) | Future | No — significant feature |
+| #5827 | 18 | Extension install from private GitLab | Future | No — auth/protocol work |
+| #1328 | 15 | Collapse callouts in revealjs | Future | Moderate |
+| #2795 | 7 | Preview not updated on included file changes | v1.10 | Moderate |
+| #5036 | 6 | QED symbol at end of proof | Future | Yes — LaTeX/typst tweak |
+| #11877 | 5 | Chrome Headless improvements | v1.10 | No — epic |
+| #12104 | 4 | Add uv among venv examples | v1.10 | **Yes — docs only** |
+| #11800 | 4 | Customize TinyTeX install directory | Future | Moderate |
+| #1167 | 4 | Callout boxes for ipynb output | Future | Moderate |
+| #11727 | 0 | Lightbox caption formatting (regression) | Future | Moderate |
+| #13006 | 0 | Locked database on shared storage | v1.10 | No — complex |
+
+### cderv v1.10 issues (assigned, in next release)
+Key items from your v1.10 queue that need attention:
+- **#2795** Preview not updated on included files (7 reactions)
+- **#11877** Chrome Headless improvements (epic)
+- **#12104** Add uv venv example (quick docs fix)
+- **#12065** Contents shortcode with knitr
+- **#13006** Locked database on shared filesystems (33 comments, complex)
+- **#5766** Plotly image rendering in GH actions
+- **#1460** format-resources not cleaned up
+
+---
+
+## Quick Wins vs Deep Problems
+
+### Quick Wins (can likely be fixed in 1-2 hours)
+
+**Unassigned regressions — CSS/JS fixes with clear root causes:**
+
+| # | Issue | Why it's quick | Status |
+|---|-------|----------------|--------|
+| #13390 | Code blocks in lists: two backgrounds | Reporter provided fix: `background-color: inherit` | Unassigned |
+| #13583 | code-tools broken with code-copy | Root cause identified: `code-copy-outer-scaffold` breaks querySelector | Unassigned |
+| #13448 | Code annotation highlight overflow | CSS regression from PR #13429, clear screenshots | Unassigned |
+| #13446 | Code-copy button outside code blocks | CSS positioning issue in callouts | Unassigned |
+| #13444 | Code-copy overlaps annotation marker | CSS overlap, clear repro | Unassigned |
+| #13669 | BibTeX copy button missing | Simple UI regression | Unassigned |
+
+**Other quick wins:**
+
+| # | Issue | Why it's quick | Assignee |
+|---|-------|----------------|----------|
+| #12104 | Add uv among venv command examples | Documentation-only change | cderv |
+| #12476 | Remove console.log from codebase | Grep + delete, early-in-release | Unassigned |
+| #5036 | QED symbol at end of proof | Small LaTeX/typst addition | cderv |
+
+### Moderate Effort (half-day to a few days)
+
+| # | Issue | Complexity | Assignee |
+|---|-------|------------|----------|
+| #12890 | monofont broken since 1.6.27 | Version narrowed, CSS rule issue | cscheid |
+| #13450 | Brand causes 3 stylesheets | Brand/dark-mode heuristics | gordonwoodhull |
+| #13372 | Subtables fail in beamer | LaTeX subcaption, from specific PR | cscheid |
+| #11727 | Lightbox caption formatting | Lightbox strips markdown in captions | cderv |
+| #2795 | Preview not updated on includes | File watcher scope | cderv |
+| #1460 | format-resources not cleaned up | Cleanup logic in render pipeline | cderv |
+
+### Deep Problems (days to weeks, architecture involved)
+
+| # | Issue | Why it's deep | Assignee |
+|---|-------|---------------|----------|
+| #13006 | Locked database on shared storage | SQLite + NFS fundamentally incompatible, needs alternative locking strategy | cderv |
+| #10146 | Multi-part figures stretched | Long-standing subfigure layout, 20 comments of debugging | cscheid |
+| #10436 | Multiple jupyter frontmatter files | YAML delimiter detection, PR #13947 in progress | cscheid |
+| #12992 | Preview crash with ipynb+qmd | Race condition in temp directory cleanup | Unassigned |
+| #4197 | Deno memory (8GB mmap) | V8 engine limitation, needs upstream Deno changes | Unassigned |
+| #7151 | gt table docx rendering | Cross-ref + gt + docx interaction, 49 comments | Unassigned |
+
+---
+
+## Top Unassigned Issues (Opportunities)
+
+High-reaction issues with **no assignee** — available for anyone to pick up:
+
+| # | +1 | Title | Milestone | Effort |
+|---|-----|-------|-----------|--------|
+| #3795 | 32 | Blog listing page navigation | v1.10 | Medium |
+| #275 | 25 | Multilingual websites/books | Future | Large |
+| #2022 | 24 | Google Slides output | Future | Large |
+| #844 | 24 | Custom callout boxes | Future | Medium |
+| #376 | 18 | Wrapfigure support | v1.10 | Medium |
+| #5961 | 17 | TOC only visible in wide desktop | Future | Small-Medium |
+| #2556 | 17 | Books without index.qmd | Future | Medium |
+| #6741 | 17 | Bootswatch paired light/dark themes | Future | Medium |
+| #419 | 16 | Dropdown tabset panels | Future | Medium |
+| #5072 | 15 | Confluence Data Center | Future | Large (epic) |
+| #3917 | 15 | `quarto create post` command | Future | Small-Medium |
+| #1585 | 15 | Backlinks in website output | Future | Medium |
+| #2065 | 13 | Pretty URLs for websites | Future | Medium |
+| #474 | 11 | Version selector for websites/books | Future | Large |
+
+---
+
+## Early-in-Release Issues (41 open)
+
+Issues labeled `early-in-release` are flagged to address early in the release cycle. Notable ones:
+
+| # | +1 | Title | Assignee |
+|---|-----|-------|----------|
+| #6092 | 9 | `default-image-extension` docs | cscheid |
+| #11877 | 5 | Chrome Headless improvements (epic) | cderv |
+| #12476 | 2 | Remove console.log from codebase | Unassigned |
+| #5766 | 2 | Plotly image rendering in GH actions | cderv |
+| #7843 | 2 | Leaflet legends centered with fig- label | cscheid |
+| #4955 | 2 | Don't bundle JS anymore | cscheid |
+| #12065 | 1 | Contents shortcode with knitr | cderv |
+| #11305 | 1 | Control engine resolution order | cscheid |
+| #7064 | 1 | Custom crossrefs localization | cscheid |
+| #1460 | 1 | format-resources not cleaned up | cderv |
+
+---
+
 ## Recommended Work Priorities
 
-### Immediate (Quick Wins / Regression Fixes)
-1. **Code block regression cluster** (#13583, #13448, #13446, #13444, #13390) -- likely related root cause
-2. **Brand/theme regressions** (#12890, #13450)
-3. **Citation copy button regression** (#13669)
+### Immediate: Quick Wins (unassigned, clear fixes)
+1. **Code block regression cluster** (#13583, #13448, #13446, #13444, #13390) — 5 CSS/JS fixes, unassigned, likely 1-2 PRs
+2. **Citation copy button** (#13669) — unassigned, simple UI fix
+3. **Remove console.log** (#12476) — unassigned, early-in-release, grep+delete
+4. **Add uv venv docs** (#12104) — assigned to cderv, docs-only
 
-### Short-term (High Impact Features)
-1. **Glossary support** (#1697) -- most wanted feature, 49 reactions
-2. **Blog listing pagination** (#3795) -- 32 reactions
-3. **Custom callout boxes** (#844) -- 24 reactions
-4. **Result folding** (#341) -- 37 reactions
-5. **Equation refs in align** (#2275) -- longstanding bug, 36 comments
+### Short-term: High Impact (v1.10 milestone)
+1. **Result folding** (#341) — 37 reactions, v1.10
+2. **Blog listing pagination** (#3795) — 32 reactions, v1.10, unassigned
+3. **Wrapfigure support** (#376) — 18 reactions, v1.10
+4. **Code-fold for non-executable** (#4693) — 13 reactions, v1.10
+5. **Preview on included files** (#2795) — 7 reactions, v1.10, cderv
 
-### Medium-term (Significant Features)
-1. **Multilingual websites/books** (#275) -- 25 reactions, 44 comments
-2. **Paired light/dark themes** (#6741) -- 23 reactions
-3. **Responsive TOC** (#5961) -- 17 reactions
-4. **Books without index.qmd** (#2556) -- 17 reactions
-5. **Deno memory issues** (#4197) -- 59 comments, affects CI/CD users
+### Medium-term: High Impact (Future milestone, high reactions)
+1. **Glossary support** (#1697) — 49 reactions, Future
+2. **Custom callout boxes** (#844) — 24 reactions, Future, unassigned
+3. **Multilingual websites/books** (#275) — 25 reactions, Future, unassigned
+4. **Paired light/dark themes** (#6741) — 23 reactions, Future, unassigned
+5. **Collapse callouts in revealjs** (#1328) — 18 reactions, Future, cderv
 
 ### Strategic (Epics / Architecture)
-1. **Execution Planner** (#6518) -- 19 reactions, epic
-2. **PDF rethink** (#7039) -- 10 reactions, epic
-3. **Chrome Headless improvements** (#11877) -- recent epic
-4. **Confluence Data Center** (#5072) -- 15 reactions
+1. **Execution Planner** (#6518) — 19 reactions, epic
+2. **Chrome Headless improvements** (#11877) — cderv, early-in-release, v1.10
+3. **PDF rethink** (#7039) — 10 reactions, epic
+4. **Confluence Data Center** (#5072) — 15 reactions, unassigned
 
 ---
 
