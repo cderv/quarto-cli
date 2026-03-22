@@ -7,6 +7,7 @@
 
 import { execProcess } from "../../../src/core/process.ts";
 import { join } from "../../../src/deno_ral/path.ts";
+import { walkSync } from "../../../src/deno_ral/fs.ts";
 import { CreateResult } from "../../../src/command/create/cmd-types.ts";
 import { assert } from "testing/asserts";
 import { quartoDevCmd } from "../../utils.ts";
@@ -60,6 +61,21 @@ for (const type of Object.keys(kCreateTypes)) {
         }
         assert(process.success, process.stderr);
       });
+
+      // Verify all created files are user-writable
+      if (Deno.build.os !== "windows") {
+        await t.step(`> check writable ${type} ${template}`, () => {
+          for (const entry of walkSync(artifactPath)) {
+            if (entry.isFile) {
+              const stat = Deno.statSync(entry.path);
+              assert(
+                stat.mode !== null && (stat.mode! & 0o200) !== 0,
+                `File ${entry.path} is not user-writable (mode: ${stat.mode?.toString(8)})`,
+              );
+            }
+          }
+        });
+      }
 
       // Render the artifact
       await t.step(`> render ${type} ${template}`, async () => {

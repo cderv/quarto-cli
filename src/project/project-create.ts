@@ -5,7 +5,11 @@
  */
 
 import * as ld from "../core/lodash.ts";
-import { ensureDirSync, existsSync } from "../deno_ral/fs.ts";
+import {
+  ensureDirSync,
+  ensureUserWritable,
+  existsSync,
+} from "../deno_ral/fs.ts";
 import { basename, dirname, join } from "../deno_ral/path.ts";
 import { info } from "../deno_ral/log.ts";
 
@@ -26,17 +30,6 @@ import { ensureGitignore } from "./project-gitignore.ts";
 import { kWebsite } from "./types/website/website-constants.ts";
 import { copyTo } from "../core/copy.ts";
 import { normalizePath } from "../core/path.ts";
-import { safeChmodSync, safeModeFromFile } from "../deno_ral/fs.ts";
-
-// Ensure a copied file has user write permission.
-// Files copied from installed resources may be read-only,
-// but users expect to edit files created by `quarto create`.
-function ensureUserWritable(path: string) {
-  const mode = safeModeFromFile(path);
-  if (mode !== undefined && !(mode & 0o200)) {
-    safeChmodSync(path, mode | 0o200);
-  }
-}
 
 export interface ProjectCreateOptions {
   dir: string;

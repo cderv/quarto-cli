@@ -14,23 +14,12 @@ import { info } from "../../../deno_ral/log.ts";
 import { basename, dirname, join, relative } from "../../../deno_ral/path.ts";
 import {
   ensureDirSync,
-  safeChmodSync,
-  safeModeFromFile,
+  ensureUserWritable,
   walkSync,
 } from "../../../deno_ral/fs.ts";
 import { renderEjs } from "../../../core/ejs.ts";
 import { safeExistsSync } from "../../../core/path.ts";
 import { CreateDirective, CreateDirectiveData } from "../cmd-types.ts";
-
-// Ensure a copied file has user write permission.
-// Files copied from installed resources may be read-only,
-// but users expect to edit files created by `quarto create`.
-function ensureUserWritable(path: string) {
-  const mode = safeModeFromFile(path);
-  if (mode !== undefined && !(mode & 0o200)) {
-    safeChmodSync(path, mode | 0o200);
-  }
-}
 
 // File paths that include this string will get fixed up
 // and the value from the ejs data will be substituted
