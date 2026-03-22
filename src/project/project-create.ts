@@ -26,6 +26,17 @@ import { ensureGitignore } from "./project-gitignore.ts";
 import { kWebsite } from "./types/website/website-constants.ts";
 import { copyTo } from "../core/copy.ts";
 import { normalizePath } from "../core/path.ts";
+import { safeChmodSync, safeModeFromFile } from "../deno_ral/fs.ts";
+
+// Ensure a copied file has user write permission.
+// Files copied from installed resources may be read-only,
+// but users expect to edit files created by `quarto create`.
+function ensureUserWritable(path: string) {
+  const mode = safeModeFromFile(path);
+  if (mode !== undefined && !(mode & 0o200)) {
+    safeChmodSync(path, mode | 0o200);
+  }
+}
 
 export interface ProjectCreateOptions {
   dir: string;
@@ -139,6 +150,7 @@ export async function projectCreate(options: ProjectCreateOptions) {
       if (!existsSync(dest)) {
         ensureDirSync(dirname(dest));
         copyTo(src, dest);
+        ensureUserWritable(dest);
         if (!options.quiet) {
           info("- Created " + displayName, { indent: 2 });
         }
@@ -256,6 +268,7 @@ function projectMarkdownFile(
       const name = basename(from);
       const target = join(dirname(path), name);
       copyTo(from, target);
+      ensureUserWritable(target);
     });
 
     return subdirectory ? join(subdirectory, name) : name;
