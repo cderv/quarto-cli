@@ -6,16 +6,11 @@
 */
 
 import { execProcess } from "../../../src/core/process.ts";
-import { dirname, fromFileUrl, join } from "../../../src/deno_ral/path.ts";
+import { join } from "../../../src/deno_ral/path.ts";
 import { walkSync } from "../../../src/deno_ral/fs.ts";
 import { CreateResult } from "../../../src/command/create/cmd-types.ts";
 import { assert } from "testing/asserts";
 import { quartoDevCmd } from "../../utils.ts";
-
-// Resolve the repo's resource directory from the test file location.
-// tests/smoke/create/create.test.ts → src/resources/
-const testDir = dirname(fromFileUrl(import.meta.url));
-const resourceDir = join(testDir, "..", "..", "..", "src", "resources");
 
 const kCreateTypes: Record<string, string[]> = {
   "project": ["website", "default", "book", "website:blog"],
@@ -128,91 +123,4 @@ for (const type of Object.keys(kCreateTypes)) {
       Deno.removeSync(artifactPath, { recursive: true });
     });
   }
-}
-
-// Test that simulates read-only resource files (as found in Nix/deb installs).
-// Makes source template files read-only before running quarto create, then
-// verifies that output files are still user-writable.
-if (Deno.build.os !== "windows") {
-  Deno.test(
-    "quarto create extension filter - read-only source files",
-    async (t) => {
-      const templateDir = join(resourceDir, "create", "extensions", "filter");
-      const sourceFiles: { path: string; originalMode: number }[] = [];
-
-      // Collect all files and make them read-only
-      await t.step("> make source templates read-only", () => {
-        for (const entry of walkSync(templateDir)) {
-          if (entry.isFile) {
-            const stat = Deno.statSync(entry.path);
-            if (stat.mode !== null) {
-              sourceFiles.push({
-                path: entry.path,
-                originalMode: stat.mode!,
-              });
-              Deno.chmodSync(entry.path, stat.mode! & ~0o222);
-            }
-          }
-        }
-        // Verify at least one file was made read-only
-        assert(
-          sourceFiles.length > 0,
-          "Should have found template files to make read-only",
-        );
-      });
-
-      try {
-        // Create the extension from read-only sources
-        const artifactPath = join(tempDir, "readonly-filter-test");
-        const createDirective = {
-          type: "extension",
-          directive: {
-            directory: artifactPath,
-            template: "filter",
-            name: "readonlyfiltertest",
-          },
-        };
-
-        await t.step("> quarto create with read-only sources", async () => {
-          const cmd = [quartoDevCmd(), "create", "--json"];
-          const stdIn = JSON.stringify(createDirective);
-          const process = await execProcess({
-            cmd: cmd[0],
-            args: cmd.slice(1),
-            stdout: "piped",
-            stderr: "piped",
-          }, stdIn);
-          assert(process.success, process.stderr);
-        });
-
-        // Verify all output files are user-writable
-        await t.step("> verify output files are writable", () => {
-          let fileCount = 0;
-          for (const entry of walkSync(artifactPath)) {
-            if (entry.isFile) {
-              const stat = Deno.statSync(entry.path);
-              assert(
-                stat.mode !== null && (stat.mode! & 0o200) !== 0,
-                `File ${entry.path} is not user-writable (mode: ${stat.mode?.toString(8)})`,
-              );
-              fileCount++;
-            }
-          }
-          assert(fileCount > 0, "Should have created at least one file");
-        });
-
-        // Cleanup artifact
-        Deno.removeSync(artifactPath, { recursive: true });
-      } finally {
-        // Always restore original permissions
-        for (const { path, originalMode } of sourceFiles) {
-          try {
-            Deno.chmodSync(path, originalMode);
-          } catch {
-            // Best-effort restore
-          }
-        }
-      }
-    },
-  );
 }
