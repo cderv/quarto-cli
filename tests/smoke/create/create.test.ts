@@ -62,7 +62,11 @@ for (const type of Object.keys(kCreateTypes)) {
         assert(process.success, process.stderr);
       });
 
-      // Verify all created files are user-writable
+      // Verify all created files are user-writable.
+      // NOTE: In dev environments, resource files are already writable (0o644),
+      // so this test passes even without ensureUserWritable. It guards against
+      // regressions; the unit test in file-permissions.test.ts covers the
+      // read-only → writable transition directly.
       if (Deno.build.os !== "windows") {
         await t.step(`> check writable ${type} ${template}`, () => {
           for (const entry of walkSync(artifactPath)) {

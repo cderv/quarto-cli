@@ -1,7 +1,7 @@
 /*
  * file-permissions.test.ts
  *
- * Copyright (C) 2020-2025 Posit Software, PBC
+ * Copyright (C) 2020-2026 Posit Software, PBC
  */
 
 import { unitTest } from "../test.ts";
@@ -35,10 +35,10 @@ unitTest(
       ensureUserWritable(testFile);
 
       const modeAfter = safeModeFromFile(testFile);
-      assert(modeAfter !== undefined);
-      assert(
-        (modeAfter! & 0o200) !== 0,
-        "File should be user-writable after fix",
+      assertEquals(
+        modeAfter,
+        0o644,
+        "Mode should be exactly 0o644 (0o444 | 0o200) — only user write bit added",
       );
     } finally {
       Deno.removeSync(tempDir, { recursive: true });
