@@ -14,8 +14,6 @@ import {
   safeModeFromFile,
 } from "../../src/deno_ral/fs.ts";
 
-const permContext = { ignore: isWindows };
-
 function writeFile(dir: string, name: string, content: string, mode: number): string {
   const path = join(dir, name);
   Deno.writeTextFileSync(path, content);
@@ -38,7 +36,7 @@ unitTest(
     assertEquals(safeModeFromFile(file), 0o644,
       "Mode should be exactly 0o644 (0o444 | 0o200) — only user write bit added");
   }),
-  permContext,
+  { ignore: isWindows },
 );
 
 unitTest(
@@ -53,7 +51,7 @@ unitTest(
     assertEquals(safeModeFromFile(file), modeBefore,
       "Mode should be unchanged for already-writable file");
   }),
-  permContext,
+  { ignore: isWindows },
 );
 
 // Simulates the Nix/deb scenario: Deno.copyFileSync from a read-only source
@@ -81,5 +79,5 @@ unitTest(
     assertEquals(safeModeFromFile(dest), 0o644,
       "Copied file should be user-writable after ensureUserWritable");
   }),
-  permContext,
+  { ignore: isWindows },
 );
