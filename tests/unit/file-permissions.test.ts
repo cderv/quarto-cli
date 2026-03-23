@@ -20,7 +20,7 @@ unitTest(
 
     const tempDir = Deno.makeTempDirSync({ prefix: "quarto-perm-test" });
     try {
-      const testFile = `${tempDir}/readonly.txt`;
+      const testFile = join(tempDir, "readonly.txt");
       Deno.writeTextFileSync(testFile, "test content");
 
       // Make file read-only (simulate system-installed resource)
@@ -55,7 +55,7 @@ unitTest(
 
     const tempDir = Deno.makeTempDirSync({ prefix: "quarto-perm-test" });
     try {
-      const testFile = `${tempDir}/writable.txt`;
+      const testFile = join(tempDir, "writable.txt");
       Deno.writeTextFileSync(testFile, "test content");
       Deno.chmodSync(testFile, 0o644);
 
