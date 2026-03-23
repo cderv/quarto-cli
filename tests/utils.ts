@@ -20,6 +20,18 @@ export function inTempDirectory(fn: (dir: string) => unknown): unknown {
   return fn(dir);
 }
 
+export function withTempDir(
+  fn: (dir: string) => void,
+  prefix = "quarto-test",
+) {
+  const dir = Deno.makeTempDirSync({ prefix });
+  try {
+    fn(dir);
+  } finally {
+    Deno.removeSync(dir, { recursive: true });
+  }
+}
+
 // Find a _quarto.yaml file in the directory hierarchy of the input file
 export function findProjectDir(input: string, until?: RegExp | undefined): string | undefined {
   let dir = dirname(input);

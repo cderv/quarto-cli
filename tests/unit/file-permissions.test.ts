@@ -5,30 +5,16 @@
  */
 
 import { unitTest } from "../test.ts";
+import { withTempDir } from "../utils.ts";
 import { assert, assertEquals } from "testing/asserts";
 import { join } from "../../src/deno_ral/path.ts";
+import { isWindows } from "../../src/deno_ral/platform.ts";
 import {
   ensureUserWritable,
   safeModeFromFile,
 } from "../../src/deno_ral/fs.ts";
 
-const isWindows = Deno.build.os === "windows";
 const permContext = { ignore: isWindows };
-
-function withTempDir(fn: (dir: string) => void) {
-  const tempDir = Deno.makeTempDirSync({ prefix: "quarto-perm-test" });
-  try {
-    fn(tempDir);
-  } finally {
-    // Ensure all files are writable so cleanup succeeds (e.g. read-only sources)
-    for (const entry of Deno.readDirSync(tempDir)) {
-      try {
-        Deno.chmodSync(join(tempDir, entry.name), 0o644);
-      } catch { /* best effort */ }
-    }
-    Deno.removeSync(tempDir, { recursive: true });
-  }
-}
 
 function writeFile(dir: string, name: string, content: string, mode: number): string {
   const path = join(dir, name);
@@ -86,6 +72,9 @@ unitTest(
     const modeBefore = safeModeFromFile(dest);
     assert(modeBefore !== undefined);
     assert((modeBefore! & 0o200) === 0, "Copied file should inherit read-only mode from source");
+
+    // Make source writable so cleanup succeeds
+    Deno.chmodSync(src, 0o644);
 
     ensureUserWritable(dest);
 
