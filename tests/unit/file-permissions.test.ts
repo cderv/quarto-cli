@@ -12,12 +12,12 @@ import {
   safeModeFromFile,
 } from "../../src/deno_ral/fs.ts";
 
+const isWindows = Deno.build.os === "windows";
+
 unitTest(
   "file-permissions - ensureUserWritable fixes read-only files",
   // deno-lint-ignore require-await
   async () => {
-    if (Deno.build.os === "windows") return;
-
     const tempDir = Deno.makeTempDirSync({ prefix: "quarto-perm-test" });
     try {
       const testFile = join(tempDir, "readonly.txt");
@@ -45,14 +45,13 @@ unitTest(
       Deno.removeSync(tempDir, { recursive: true });
     }
   },
+  { ignore: isWindows },
 );
 
 unitTest(
   "file-permissions - ensureUserWritable leaves writable files unchanged",
   // deno-lint-ignore require-await
   async () => {
-    if (Deno.build.os === "windows") return;
-
     const tempDir = Deno.makeTempDirSync({ prefix: "quarto-perm-test" });
     try {
       const testFile = join(tempDir, "writable.txt");
@@ -73,6 +72,7 @@ unitTest(
       Deno.removeSync(tempDir, { recursive: true });
     }
   },
+  { ignore: isWindows },
 );
 
 // Simulates the Nix/deb scenario: Deno.copyFileSync from a read-only source
@@ -81,8 +81,6 @@ unitTest(
   "file-permissions - copyFileSync from read-only source then ensureUserWritable",
   // deno-lint-ignore require-await
   async () => {
-    if (Deno.build.os === "windows") return;
-
     const tempDir = Deno.makeTempDirSync({ prefix: "quarto-perm-test" });
     try {
       // Create a "source resource" file and make it read-only
@@ -117,4 +115,5 @@ unitTest(
       Deno.removeSync(tempDir, { recursive: true });
     }
   },
+  { ignore: isWindows },
 );
