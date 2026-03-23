@@ -67,8 +67,10 @@ for (const type of Object.keys(kCreateTypes)) {
       // so this test passes even without ensureUserWritable. It guards against
       // regressions; the unit test in file-permissions.test.ts covers the
       // read-only → writable transition directly.
-      if (Deno.build.os !== "windows") {
-        await t.step(`> check writable ${type} ${template}`, () => {
+      await t.step({
+        name: `> check writable ${type} ${template}`,
+        ignore: Deno.build.os === "windows",
+        fn: () => {
           for (const entry of walkSync(artifactPath)) {
             if (entry.isFile) {
               const stat = Deno.statSync(entry.path);
@@ -78,8 +80,8 @@ for (const type of Object.keys(kCreateTypes)) {
               );
             }
           }
-        });
-      }
+        },
+      });
 
       // Render the artifact
       await t.step(`> render ${type} ${template}`, async () => {
