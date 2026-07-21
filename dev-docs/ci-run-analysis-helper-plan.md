@@ -80,7 +80,7 @@ Implementation (complete):
  * Copyright (C) 2020-2026 Posit Software, PBC
  */
 
-const kBom = "﻿";
+const kBom = "\uFEFF";
 const kIso = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z ?/;
 // gh run view --log: "<job>\t<step>\t<timestamped line>"
 const kGhView = /^[^\t\n]*\t[^\t\n]*\t/;
@@ -158,13 +158,12 @@ export function normalizeRendered(
 
 Tests (`tests/unit/gha-rendered-log.test.ts`, via `unitTest` from
 `../test.ts` like `gha-grouping.test.ts`). Cases — build fixtures as
-inline template strings with `\r\n` and a leading `﻿` where relevant:
+inline template strings with `\r\n` and a leading `"\uFEFF"` where relevant:
 
 1. `detectForm`: raw sample (lines incl. `::group::smoke/a.test.ts`) →
-   `"raw"`; zip sample (`﻿2026-07-21T10:00:00.123Z ##[group]Run ./x`)
-   → `"rendered-zip"`; ghview sample (`job\tRun all Smoke Tests
-   Linux\t2026-… line`) → `"rendered-zip"`-prefixed lines with tab fields →
-   `"rendered-ghview"`; 50/50 mixed → throws containing `"ambiguous"`;
+   `"raw"`; zip sample (`"\uFEFF" + "2026-07-21T10:00:00.123Z ##[group]Run ./x`)
+   → `"rendered-zip"`; ghview sample (lines like `job\tRun all Smoke
+   Tests Linux\t2026-… content`) → `"rendered-ghview"`; 50/50 mixed → throws containing `"ambiguous"`;
    empty → throws.
 2. `normalizeRendered` on a zip fixture containing: preamble block
    (`##[group]Run ./run-tests.sh` … `echo "::group::Testing X"` …
