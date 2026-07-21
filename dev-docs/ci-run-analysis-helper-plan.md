@@ -75,7 +75,9 @@ Implementation (complete):
  * unparsed markers survive verbatim (source-confirmed) — so a literal
  * ::group:: outside the elided script-source preamble is a genuine
  * invariant-2 signal, not noise. Framing is the runner's legacy format:
- * fail loudly on anything unrecognized, never degrade silently.
+ * form detection and gh-view line structure are strict (throw, never
+ * guess); within a recognized log only group framing is mapped — other
+ * ##[...] lines pass through, which checkLog() ignores.
  *
  * Copyright (C) 2020-2026 Posit Software, PBC
  */
@@ -235,9 +237,8 @@ export interface BudgetReport {
   counts: Record<AnnotationClass, number>;
 }
 
-export const kHarnessCap = 9;      // per-test annotations per step
-export const kGitHubStepCap = 10;  // GitHub's hard per-step cap
-export const kGitHubJobCap = 50;   // GitHub's hard per-job cap
+export const kHarnessCap = 9;     // per-test annotations per step
+export const kGitHubJobCap = 50;  // GitHub's hard per-job cap
 
 // `orchestrated`: caller says this job's test steps ran with
 // QUARTO_TESTS_GHA_ORCHESTRATED=1 (bucket legs) — harness must be silent.
@@ -270,9 +271,10 @@ export function checkBudget(
     );
   }
   if (annotations.length >= kGitHubJobCap) {
-    notes.push(
+    problems.push(
       `${annotations.length} annotations ≥ GitHub job cap ` +
-        `${kGitHubJobCap} — later annotations were silently dropped`,
+        `${kGitHubJobCap} — GitHub silently dropped the rest; ` +
+        "annotation evidence is incomplete",
     );
   }
   return { ok: problems.length === 0, problems, notes, counts };
@@ -288,8 +290,8 @@ Tests (`tests/unit/gha-annotations.test.ts`):
    `"harness"`; level-only junk → `"other"`.
 2. `checkBudget`: 9 harness + 1 aggregate + 2 yaml, non-orchestrated →
    `ok: true`; 10 harness → problem; 2 aggregates → problem; orchestrated
-   + 1 harness → problem mentioning the gate; 50 mixed → `ok` but note
-   about dropping; counts always returned.
+   + 1 harness → problem mentioning the gate; 50 mixed → `ok: false`
+   with an evidence-incomplete problem; counts always returned.
 
 Verify: `cd tests && ./run-tests.sh unit/gha-annotations.test.ts` → `ok`.
 Commit: `Add check-run annotation classifier and budget checks`.

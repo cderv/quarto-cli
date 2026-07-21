@@ -55,8 +55,10 @@ on doc changes.
   parse it — which *is* an invariant-2 violation.
 - *(source-confirmed)* `##[group]` is the runner's *legacy* command
   framing — actively written by the runner itself, but its stability is not
-  contractual. Any consumer of the rendered form must fail loudly on
-  unrecognized framing rather than degrade silently.
+  contractual. Consumers must never silently guess: form detection
+  refuses ambiguous input, and only group framing is interpreted — other
+  `##[...]` lines pass through untouched (harmless: `checkLog()` ignores
+  them).
 - No raw-stdout artifact is uploaded by `test-smokes.yml`, so finished runs
   currently offer only the rendered form.
 
@@ -136,9 +138,12 @@ the **untouched** `checkLog()`. This works retroactively on any finished
 run, needs no workflow change and no storage. Two semantics to encode:
 (a) in rendered form, a surviving literal marker outside the elided
 preamble is the invariant-2 violation signal (see source-confirmed facts);
-(b) unrecognized framing must be a loud error. The entry point
-auto-detects raw vs rendered and **refuses ambiguous input**, closing the
-vacuous-pass hazard of feeding a rendered log to the raw checker.
+(b) the normalizer interprets only what it must: group framing is
+mapped, other `##[...]` lines pass through untouched (`checkLog()` ignores
+them), while form detection and gh-view line structure are strict — throw,
+never guess. The entry point auto-detects raw vs rendered and **refuses
+ambiguous input**, closing the vacuous-pass hazard of feeding a rendered
+log to the raw checker.
 
 **Later (deferred with D):** a single `if: always()` step in
 `test-smokes.yml` uploading tee'd raw stdout + a copy of
@@ -155,7 +160,12 @@ The strongest surface, and the helper's centerpiece (see `annotations`
 subcommand below). Minor tradeoffs: pagination, the PAT-403 caveat
 (documented in the skill), and asserting per-*step* caps against
 per-*check-run* (per-job) data — sound because the path/title
-classification separates harness from orchestrator emissions.
+classification separates harness from orchestrator emissions, and because
+`test-smokes.yml` runs exactly one harness-owned test step per job (the
+four test steps are mutually exclusive on OS × `buckets`). **Stated
+assumption:** if a job ever runs two harness-owned test steps, per-job
+counting conflates them and the 9-cap check reads their sum — revisit
+then.
 
 ### D. Step summary: UI-only now, artifact folded into B-later
 
@@ -186,7 +196,10 @@ out to `gh` for auth/transport (`Deno.Command`), defaults
 - `annotations <run-id> [--json]` — resolve jobs → check-run IDs → fetch
   annotations; classify harness / aggregate / yaml-orchestrator / runner /
   other; assert: harness ≤ 9 and aggregate ≤ 1 per job, zero harness on
-  orchestrated legs, total < 50. Table for humans, `--json` for scripts.
+  orchestrated legs; total ≥ 50 (the GitHub job cap) is a **hard
+  failure** — GitHub silently drops annotations past it, so the evidence
+  is incomplete, which a verification tool must not bless. Table for
+  humans, `--json` for scripts.
 - `verdict <run-id>` — composite PASS/FAIL: run conclusion, per-leg
   `check-log`, annotation assertions, julia-gate `::notice` presence on
   built-mode legs, pre-harness detection, summary deep link + checklist.
@@ -239,10 +252,12 @@ The B/D workflow step, explicitly out of scope for the first PR.
    broke?"** Baseline: session suspects a harness bug and digs into
    `tests/test.ts`. Success: helper reports the pre-harness signature and
    points at the failing step's log lines.
-4. **"Confirm bucket-mode logs are byte-identical before/after a harness
-   change."** Baseline: manual download + diff drowned in timestamp noise.
-   Success: `fetch` + normalize `--strip-timestamps` + diff gives a clean
-   verdict.
+4. **"Confirm bucket-mode logs are semantically unchanged before/after a
+   harness change."** Baseline: manual download + diff drowned in
+   timestamp noise. Success: `fetch` + normalize + diff on the normalized
+   form (timestamps/CRLF/BOM/preamble removed) gives a clean verdict.
+   True *byte* identity needs the deferred raw-stdout artifact
+   (Component 3).
 
 Baseline measurement: run each scenario once in a session without the
 skill; record tool-call count and wrong turns. That is the bar the skill
@@ -265,8 +280,9 @@ must beat.
 ## Risks / open questions
 
 - **Rendered-format drift** is the main risk to B-now: legacy framing,
-  undocumented. Mitigated by real-log fixtures, loud failure on
-  unrecognized framing, and the same "re-check on version bump" discipline
+  undocumented. Mitigated by real-log fixtures, strict form detection
+  (ambiguity refuses rather than guesses), and the same
+  "re-check on version bump" discipline
   the checker documents for Deno.
 - **Scope creep**: this stays a quarto-cli-specific evidence tool, not a
   general Actions client. YAGNI applies to every subcommand beyond the
