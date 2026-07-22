@@ -91,6 +91,14 @@ on doc changes.
 
 - `GITHUB_STEP_SUMMARY` has no REST endpoint (confirmed against `cli/cli`
   and the docs) — UI-only unless a tee + `upload-artifact` step is added.
+- The web route
+  `github.com/O/R/actions/runs/RUN_ID/jobs/JOB_ID/summary_raw` serves the
+  summary's raw markdown, but only to a logged-in browser session:
+  unauthenticated and `Authorization: Bearer <gh token>` requests both
+  return 404 even on a public repo (verified 2026-07-22 against run
+  29841891595; matches community discussion #27649 — there is no
+  token-auth path). Useless for tooling, excellent as a human deep link:
+  one click to copy-pasteable raw markdown.
 - Coverage boundary: summary rows are written by the harness only for
   failures it executes and observes. Pre-harness / infra failures (bad
   bucket arg, setup-step death, OOM before the first test) legitimately
@@ -169,8 +177,9 @@ then.
 
 ### D. Step summary: UI-only now, artifact folded into B-later
 
-Short term the composite report emits the run's summary deep link plus an
-explicit eyeball checklist, and uses the annotation data to detect the
+Short term the composite report emits per-job `summary_raw` deep links
+(the raw-markdown web route above — the fastest human path to the full
+failure record) plus an explicit eyeball checklist, and uses the annotation data to detect the
 pre-harness signature (red run + zero harness annotations + zero
 aggregate) — labeling it "infra/pre-harness failure: read the raw job
 log", which prevents the most likely future misdiagnosis. Long term the
@@ -311,3 +320,5 @@ working artifact and is dropped or folded into this doc before merge.
 - Claude Code skills reference — code.claude.com/docs/en/skills.md
   (project-skill discovery, `allowed-tools`, `${CLAUDE_PROJECT_DIR}`).
 - GitHub REST: actions runs/jobs/logs; checks — check-run annotations.
+- Step-summary API absence + `summary_raw` web route: community
+  discussion [#27649](https://github.com/orgs/community/discussions/27649).
