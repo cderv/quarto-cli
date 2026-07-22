@@ -212,6 +212,11 @@ out to `gh` for auth/transport (`Deno.Command`), defaults
 - `verdict <run-id>` — composite PASS/FAIL: run conclusion, per-leg
   `check-log`, annotation assertions, julia-gate `::notice` presence on
   built-mode legs, pre-harness detection, summary deep link + checklist.
+  Also emits **log-line deep links** (`…/job/JOB_ID#step:N:LINE`) for each
+  failure's `::group::` marker: only post-hoc tooling can build these —
+  the harness cannot (numeric job id and step index need the API; the
+  line number needs the full rendered log, most of which Deno's reporter
+  writes) — while `verdict` has all three in hand.
   Output formatted to paste into a PR comment (the artifact produced by
   hand for the #14715 trials).
 
