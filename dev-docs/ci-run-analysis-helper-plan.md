@@ -342,7 +342,7 @@ first, then subcommand):
 | `fetch <run-id>` | `--repo` (default `quarto-dev/quarto-cli`), `--job <substr\|id>`, `--attempt N`, `--cache-dir D` | list jobs via `repos/{repo}/actions/runs/{id}/jobs` (`/attempts/{n}/jobs` when `--attempt`; page with `ghPaginatedArray` on `.jobs` — use `--jq`-free object pages: fetch `?per_page=100` pages and flatten `.jobs`), filter by name-substring or numeric id, save each `gh run view <run> --repo <repo> --job <jobId> --log` to `<cache>/run-<id>-job-<jobId>.log`, print absolute paths. Cache default: `Deno.makeTempDir({ prefix: "quarto-ci-run-" })` — never inside the checkout. |
 | `check-log <path>` or `check-log <run-id> --job …` | `--step <substr>` | read file (or fetch first); `detectForm`; raw → `checkLog` directly; rendered → `normalizeRendered` (pass `--step`) → `checkLog`. Print the same OK/FAIL lines as `check-gha-log.ts`, prefixed with the detected form and `elidedBlocks`. Exit 0 clean / 1 violations / 2 usage or ambiguous form. |
 | `annotations <run-id>` | `--repo`, `--json`, `--orchestrated <substr>` | resolve jobs; check-run id = last path segment of each job's `check_run_url`; fetch `repos/{repo}/check-runs/{id}/annotations` via `ghPaginatedArray`; per job: `checkBudget(anns, { orchestrated: name.includes(substr) })` (no `--orchestrated` → false for all, gate check skipped); human table `job / class / count / verdict` or `--json` dump `{job, annotations, report}`. Exit 1 if any `ok === false`. |
-| `verdict <run-id>` | `--repo`, `--job`, `--orchestrated`, `--all-jobs` | composite: run `status/conclusion/html_url` from `repos/{repo}/actions/runs/{id}`; `annotations` pass; `check-log` on failed jobs (all with `--all-jobs`); **pre-harness detection**: red conclusion && harness+aggregate totals 0 → print `infra/pre-harness failure — no harness evidence; read the raw job log` with failing job names; end with the run URL + eyeball checklist (step summary render, group collapse). Markdown-flavored output, paste-able into a PR comment. Exit 1 on any failed check. |
+| `verdict <run-id>` | `--repo`, `--job`, `--orchestrated`, `--all-jobs` | composite: run `status/conclusion/html_url` from `repos/{repo}/actions/runs/{id}`; `annotations` pass; `check-log` on failed jobs (all with `--all-jobs`); **pre-harness detection**: red conclusion && harness+aggregate totals 0 → print `infra/pre-harness failure — no harness evidence; read the raw job log` with failing job names; end with the run URL, per-job `summary_raw` deep links (`github.com/{repo}/actions/runs/{run}/jobs/{jobId}/summary_raw` — raw markdown, logged-in browser only, never fetched by the tool) + eyeball checklist (step summary render, group collapse). Markdown-flavored output, paste-able into a PR comment. Exit 1 on any failed check. |
 
 Notes: shebang `#!/usr/bin/env -S deno run --allow-read --allow-write
 --allow-run=gh`; import `checkLog` from `../check-gha-log.ts`;
@@ -395,8 +395,10 @@ Facts that save you an hour (details:
 - Red run + EMPTY step summary + zero harness annotations = pre-harness /
   infra failure (expected signature, not a harness bug) — read the raw
   job log.
-- Step summaries are UI-only (no REST endpoint): check them on the run's
-  summary page. Re-runs: pass `--attempt N`.
+- Step summaries are UI-only (no REST endpoint; the
+  `.../jobs/JOB_ID/summary_raw` web route serves raw markdown but only to
+  a logged-in BROWSER — API tokens get 404). `verdict` prints the deep
+  links; open them yourself. Re-runs: pass `--attempt N`.
 - No gh (MCP-only session)? Endpoints: `repos/O/R/actions/runs/ID/jobs`
   (gives per-job `check_run_url`), `repos/O/R/check-runs/ID/annotations`,
   `gh run view <id> --job <jobId> --log` equivalent =
