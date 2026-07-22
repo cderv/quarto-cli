@@ -143,6 +143,17 @@ export function normalizeRendered(
       elidedBlocks++;
       continue;
     }
+    // Consumed group commands are stored as literal+processed PAIRS in
+    // completed-run logs (see spec, "Two log forms") — drop the literal
+    // when its identical processed twin is the next line, else checkLog
+    // reports spurious nesting. (::error has no twin.)
+    // NOTE for implementation: this loop is line-by-line; pair-dedup
+    // needs one line of lookahead — restructure to an indexed loop like
+    // the validated ad-hoc normalizer from the 2026-07-22 run-201
+    // verification.
+    if (line.startsWith("::group::")) {
+      // handled via lookahead in the indexed-loop restructure
+    }
     if (line.startsWith("##[group]")) {
       out.push("::group::" + line.slice("##[group]".length));
     } else if (line === "##[endgroup]") {
@@ -167,6 +178,10 @@ inline template strings with `\r\n` and a leading `"\uFEFF"` where relevant:
    → `"rendered-zip"`; ghview sample (lines like `job\tRun all Smoke
    Tests Linux\t2026-… content`) → `"rendered-ghview"`; 50/50 mixed → throws containing `"ambiguous"`;
    empty → throws.
+2a. Pair-dedup: fixture with `::group::X` immediately followed by
+   `##[group]X` (and the endgroup pair) → normalized output contains ONE
+   `::group::X`; a literal `::group::Y` with NO processed twin on the
+   next line is kept verbatim (that's the invariant-2 signal).
 2. `normalizeRendered` on a zip fixture containing: preamble block
    (`##[group]Run ./run-tests.sh` … `echo "::group::Testing X"` …
    `##[endgroup]`), then `##[group]smoke/a.test.ts`, body, `##[endgroup]`

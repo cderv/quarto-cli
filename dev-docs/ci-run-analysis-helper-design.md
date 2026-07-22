@@ -53,6 +53,17 @@ on doc changes.
   **verbatim** in the stored log. Corollary: in a rendered log, a literal
   `::group::` outside the script-source preamble means the runner did not
   parse it — which *is* an invariant-2 violation.
+- Consumed **group** commands are stored as a PAIR in completed-run
+  logs: the original literal `::group::`/`::endgroup::` line followed
+  (~0.1 ms later) by its processed `##[group]`/`##[endgroup]` twin —
+  and the completed-run viewer displays the literal above each collapsed
+  group (cosmetic, affects bucket-mode groups too; live-job view is
+  clean). `::error` commands do NOT get a literal twin. Verified
+  2026-07-22 on fork runs 29914315152 (Phase 2.1 code) and 29826031431
+  (pre-2.1 code — so this is stored-log behavior, not a harness bug).
+  The normalizer MUST dedupe these pairs (drop the literal when its
+  identical processed twin is the next line), else `checkLog()` reports
+  spurious nesting.
 - *(source-confirmed)* `##[group]` is the runner's *legacy* command
   framing — actively written by the runner itself, but its stability is not
   contractual. Consumers must never silently guess: form detection
