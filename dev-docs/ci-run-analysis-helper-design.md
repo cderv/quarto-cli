@@ -110,6 +110,16 @@ on doc changes.
   29841891595; matches community discussion #27649 — there is no
   token-auth path). Useless for tooling, excellent as a human deep link:
   one click to copy-pasteable raw markdown.
+- Rendered step summaries have NO heading anchors: GitHub's step-summary
+  markdown pipeline omits the slug/anchor post-processing that README and
+  issue rendering apply — headings render as bare `<h4>` with empty `id`,
+  no element in the rendered container carries an `id`, so `#fragment`
+  links are dead on the run-summary page (verified 2026-07-22, fork run
+  29923715216, authenticated-browser DOM inspection). Consequence:
+  `verdict` must not emit fragment links into summary sections — a
+  summary link can target the page (or `summary_raw`) only; in-summary
+  navigation is Ctrl+F on the harness's plain-text failure labels
+  (`L-F7` etc.), which is exactly why Phase 2.2 emits them unlinked.
 - Coverage boundary: summary rows are written by the harness only for
   failures it executes and observes. Pre-harness / infra failures (bad
   bucket arg, setup-step death, OOM before the first test) legitimately
