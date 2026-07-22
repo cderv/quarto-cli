@@ -94,17 +94,31 @@ export function detectForm(content: string): LogForm {
   const lines = stripBom(content).split(/\r?\n/).filter((l) => l.length > 0);
   if (lines.length === 0) throw new Error("empty log");
   const sample = lines.slice(0, 200);
+  // The two forms are disjoint: a gh-view line starts with job\tstep\t, so
+  // it can never also match kIso at column 0. Lines matching NEITHER form
+  // are expected inside a rendered log — multi-line annotation messages
+  // store their continuation lines raw (no timestamp, no gh-view prefix;
+  // fork run 29934718951) — so detection counts only form-matching lines
+  // and refuses solely on a genuine mix of the two forms (or too weak a
+  // signal to call).
   const ghview = sample.filter((l) =>
     kGhView.test(l) && kIso.test(l.replace(kGhView, ""))).length;
   const zip = sample.filter((l) => kIso.test(l)).length;
   const ratio = (n: number) => n / sample.length;
-  if (ratio(ghview) > 0.9) return "rendered-ghview";
-  if (ratio(zip) > 0.9) return "rendered-zip";
   if (zip === 0 && ghview === 0) return "raw";
+  if (zip > 0 && ghview > 0) {
+    throw new Error(
+      `ambiguous log form: ${zip}/${sample.length} timestamped, ` +
+        `${ghview}/${sample.length} gh-view lines — refusing to guess ` +
+        "(a rendered log fed to the raw checker passes vacuously)",
+    );
+  }
+  // one form matched; require it to carry the sample (the preamble alone
+  // is fully form-prefixed, so a valid rendered log always clears this)
+  if (ratio(zip + ghview) > 0.5) return zip > 0 ? "rendered-zip" : "rendered-ghview";
   throw new Error(
-    `ambiguous log form: ${zip}/${sample.length} timestamped, ` +
-      `${ghview}/${sample.length} gh-view lines — refusing to guess ` +
-      "(a rendered log fed to the raw checker passes vacuously)",
+    `ambiguous log form: only ${zip + ghview}/${sample.length} lines match ` +
+      "a rendered form — refusing to guess",
   );
 }
 
@@ -178,6 +192,12 @@ inline template strings with `\r\n` and a leading `"\uFEFF"` where relevant:
    → `"rendered-zip"`; ghview sample (lines like `job\tRun all Smoke
    Tests Linux\t2026-… content`) → `"rendered-ghview"`; 50/50 mixed → throws containing `"ambiguous"`;
    empty → throws.
+1a. `detectForm` tolerates annotation continuation lines: a zip sample
+   where ~30% of lines are raw continuation lines of a multi-line
+   `##[error]` message (no timestamp — the stored-log shape, fork run
+   29934718951) → still `"rendered-zip"`, no throw. Same sample after
+   normalization keeps the continuation lines byte-intact (a greedy
+   first-token timestamp strip would eat their first word).
 2a. Pair-dedup: fixture with `::group::X` immediately followed by
    `##[group]X` (and the endgroup pair) → normalized output contains ONE
    `::group::X`; a literal `::group::Y` with NO processed twin on the

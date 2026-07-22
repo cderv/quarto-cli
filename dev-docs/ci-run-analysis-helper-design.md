@@ -64,6 +64,18 @@ on doc changes.
   The normalizer MUST dedupe these pairs (drop the literal when its
   identical processed twin is the next line), else `checkLog()` reports
   spurious nesting.
+- Multi-line annotation messages are stored with a timestamp on the
+  `##[error]` line ONLY; the message's continuation lines (and its blank
+  lines) are raw — no timestamp, no `gh`-view job/step prefix (verified
+  2026-07-22, fork run 29934718951, Phase 2.2 trimmed annotations). Two
+  normalizer consequences: (1) timestamp stripping must remove only
+  tokens that MATCH the ISO pattern — a greedy first-token strip eats
+  the first word of every continuation line (observed corrupting
+  `Values …`/`Full output: …` in an ad-hoc pass); (2) form detection
+  must tolerate lines matching neither form inside its sample — an
+  annotation-dense sample window otherwise misreads a valid rendered
+  log as ambiguous. Detect on the lines that match a form; refuse only
+  on a genuine mix of forms.
 - *(source-confirmed)* `##[group]` is the runner's *legacy* command
   framing — actively written by the runner itself, but its stability is not
   contractual. Consumers must never silently guess: form detection
