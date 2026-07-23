@@ -54,9 +54,16 @@ The grouping work gives the default (non-bucketed) path one group per
   ("Unable to read listing item description/preview from <sibling>.html")
   REPRODUCES in built mode — not in-process state; a filesystem-level
   sibling-output dependency of single-document project renders —
-  separate triage bucket. Three failures were NEW in built mode (2
-  missing-output, 1 pdf compile) — under investigation, tracked with
-  built-version testing, not here.
+  separate triage bucket. Three failures were NEW in built mode, all
+  classified: the 2 missing-output failures are the `source=build`
+  version stamp `+test.<date>` (test-smokes-built.yml) — it fails
+  `pandoc.types.Version` parsing, so `quarto.version` falls back to a
+  plain string (datadir init.lua `version()`), and the version
+  shortcode's `table.concat(quarto.version, '.')` errors, killing the
+  render (fixes: `tostring(quarto.version)` in the shortcode +
+  a parseable numeric stamp like `<version>.<date>`); the pdf-compile
+  failure is the placeholder shortcode's external svg2png service
+  dependency, known issue quarto-dev/quarto-cli#14722.
 
 Purpose: *practical finding of errors* — pick the grouping that matches
 each suite's shape, and get isolation + wall-clock + budget headroom as
