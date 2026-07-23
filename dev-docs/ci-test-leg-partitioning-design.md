@@ -68,11 +68,24 @@ Consequences:
 - The full-serial dev-tree mode (`test-smokes.yml` on `schedule` or
   plain dispatch: empty buckets, dev quarto, ALL of `tests/` in one
   process — the mode the 2026-07-22 evidence run used) is the only mode
-  with the playwright pollution. Its future is an open question: retire
-  the schedule in favor of the built nightly, keep it dispatch-only as
-  an at-scale evidence/coverage run, or restructure it into the same
-  legs. Until decided, its ungrouped playwright stretch is a documented
-  limitation in the grouping design doc, not a code change.
+  with the playwright pollution. **Decided 2026-07-23: retire the
+  `schedule:` trigger once daily built testing is verified working.**
+  Rationale: per-commit dev coverage already exists —
+  `test-smokes-parallel.yml` buckets the FULL corpus
+  (`run-parallel-tests.ts` globs `**/*.test.ts`: unit, integration
+  incl. playwright, smoke, smoke-all per-document) on every push/PR to
+  main — so a daily dev re-run adds nothing the built nightly plus
+  per-commit runs don't cover. Keep `workflow_call` (the parallel and
+  built workflows depend on it) and `workflow_dispatch` (free; the
+  on-demand full-serial run remains the at-scale grouping-evidence and
+  order-dependence repro tool). Two checks before flipping: the built
+  nightly chain (create-release build → `workflow_run` → smokes) must
+  be observed green end-to-end, and note its cadence is gated on the
+  nightly build succeeding — a failed build means no smoke coverage
+  that day. Retiring the schedule also removes the ungrouped playwright
+  stretch from routine CI entirely, and demotes the order-dependent
+  failure triage further: those failures only manifest in the serial
+  mode, which becomes dispatch-only.
 
 ## Design: three parallel legs (in `test-smokes-built.yml`)
 
