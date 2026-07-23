@@ -14,6 +14,39 @@ Update hardcoded version strings in `src/command/check/check.ts` (`versionConstr
 
 Bumping a version in `src/import_map.json` (or any of the other keyed files) automatically invalidates the CI Deno cache on next run. See [ci-deno-caching.md](ci-deno-caching.md) for the key composition and how to force invalidation manually.
 
+### Test-runner behaviors to re-verify on Deno upgrades
+
+The CI test harness (log grouping, failure reporting — see
+`dev-docs/ci-test-log-grouping-design.md` and
+`dev-docs/ci-raw-deno-test-coverage-spec.md`) depends on `deno test`
+behaviors that are version-verified facts, not documented guarantees.
+When bumping Deno, re-check each (all verified empirically on v2.7.14,
+2026-07-23):
+
+- **Per-file module graph instantiation**: each test file's module
+  graph is instantiated separately (module-level state is per FILE,
+  `unload` fires once per file) — the SCOPE WARNING in `tests/test.ts`.
+  All harness per-file state (grouping, summary headers, clustering)
+  assumes this.
+- **`--preload` semantics** (flag landed 2.4.0): evaluated once per
+  test-file module graph, BEFORE the file's module eval, with
+  `Deno.mainModule` already set to the test file. If Deno ever makes
+  preload once-per-process, preload-based per-file grouping breaks.
+- **`Deno.test` is a plain writable property** and the runner reads it
+  at call time (never captures it) — required if we ever wrap it for
+  instrumentation or runtime guards.
+- **Lifecycle hooks** (`Deno.test.beforeAll` etc., landed 2.5.0) are
+  per-file-realm and apply to raw `Deno.test` tests.
+- **Custom reporters still absent**: `--reporter` is `pretty | dot |
+  junit | tap` only (denoland/deno#8550). If a real custom-reporter API
+  ships in a later Deno, it likely supersedes chunks of the harness's
+  console-level grouping — worth reading the release notes for.
+- **`--junit-path` works alongside the pretty stdout reporter**
+  (per-file/per-step XML at run end) — candidate input for CI run
+  analysis tooling.
+- **Custom lint plugin API** (landed 2.2.0) is officially "evolving" —
+  if we adopt a plugin for test conventions, expect possible churn.
+
 ### Upgrade Deno download link for RHEL build from conda-forge
 
 - Go to <https://anaconda.org/conda-forge/deno/files> and find the version of Deno required.
