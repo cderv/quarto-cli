@@ -170,7 +170,15 @@ explicitly (document in llm-docs/testing-patterns.md).
 4. **Modes env var + docs** — mode table, tests/README.md,
    llm-docs/testing-patterns.md (agents export `agent` mode),
    grouping-design-doc note that excerpts derive from the failure
-   record.
+   record. Also CLI sugar in both runner scripts:
+   `./run-tests.sh --agent` / `run-tests.ps1 --agent` (and a general
+   `--output-mode=<human|ci|agent>`) that exports
+   `QUARTO_TEST_OUTPUT_MODE` — flags are discoverable in usage text and
+   make the modes equally reachable on Windows, where env-var
+   prefixing is clumsy. CAUTION: both scripts classify positional args
+   as `.ts` files vs smoke-all documents (with a `--` pass-through);
+   the flag must be stripped from the arg list BEFORE that
+   classification and must never leak into the deno invocation.
 
 ## 5. Risks / open questions
 
