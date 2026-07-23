@@ -22,8 +22,16 @@ The grouping work gives the default (non-bucketed) path one group per
   self-extract (the failure path closes the group before the `FAILED`
   line) and viewer search reaches inside folds, so red-run triage works —
   but per-document navigation through the green bulk does not exist.
-- **playwright**: runs as one harness test spawning the playwright
-  suite; its output is one undifferentiated block.
+- **playwright**: `integration/playwright-tests.test.ts` never enters
+  the grouping mechanism at all — it registers with raw `Deno.test`, not
+  the harness `test()` wrapper, and renders its fixture corpus at
+  module-eval time. In the 2026-07-22 full-serial dev run that meant
+  ~17 min of ungrouped output: ~8 min of `Rendering docs/playwright/...`
+  lines that Deno's reporter misattributes to the PREVIOUS test's
+  post-test-output region (so they sit visually glued to an unrelated
+  test's group), then the ~9 min suite run. No grouping invariant is
+  violated — the previous file's unload close fires first — but the
+  stretch is unnavigable and misleading.
 - One serial process for everything also means: one shared 10-annotation
   step budget, one step summary, ~2 h wall-clock, and **cross-suite state
   contamination** — verified 2026-07-22: the `bookCrossrefIndexes` /
@@ -34,6 +42,37 @@ The grouping work gives the default (non-bucketed) path one group per
 Purpose: *practical finding of errors* — pick the grouping that matches
 each suite's shape, and get isolation + wall-clock + budget headroom as
 side effects.
+
+## Decision (2026-07-23): daily testing converges on the three built legs
+
+Daily/nightly testing standardizes on the structure
+`test-smokes-built.yml` already has — three parallel legs, all testing
+the BUILT quarto:
+
+- **smoke + smoke-all** — the binary-mode default corpus (`smoke/`);
+  that subtree contains no `integration/` or `unit/` files, so the built
+  smoke leg has no playwright pollution today, and it runs
+  harness-owned (no buckets → not orchestrated), so the log-grouping
+  work applies to it as-is;
+- **ff-matrix** — its own reusable workflow, unchanged;
+- **playwright** — its own leg (bucket
+  `["integration/playwright-tests.test.ts"]`). Isolating playwright in
+  its own leg/workflow is explicitly acceptable for daily testing.
+
+Consequences:
+
+- Legs A/B below *refine* the smoke leg of that structure (splitting
+  smoke-all out with per-document groups); Leg C upgrades the playwright
+  leg's reporting. Nothing new is needed just to get playwright out of
+  the serial harness log — the built structure already does that.
+- The full-serial dev-tree mode (`test-smokes.yml` on `schedule` or
+  plain dispatch: empty buckets, dev quarto, ALL of `tests/` in one
+  process — the mode the 2026-07-22 evidence run used) is the only mode
+  with the playwright pollution. Its future is an open question: retire
+  the schedule in favor of the built nightly, keep it dispatch-only as
+  an at-scale evidence/coverage run, or restructure it into the same
+  legs. Until decided, its ungrouped playwright stretch is a documented
+  limitation in the grouping design doc, not a code change.
 
 ## Design: three parallel legs (in `test-smokes-built.yml`)
 
@@ -141,6 +180,24 @@ Two pieces:
   track (this design only contains them).
 - Per-render sub-grouping inside a document, unit-test legs, or matrix
   re-sharding of the corpus.
+
+## PR chain context (recorded 2026-07-23)
+
+- **PR 1 [#14706] — built-version testing.** Adds binary mode
+  (`QUARTO_TEST_BIN`, `tests/quarto-cmd.ts`) and
+  `test-smokes-built.yml` with the three legs above. Note the dev-tree
+  nightly (`test-smokes.yml` `schedule`, and its plain
+  `workflow_dispatch`, which exposes no `quarto-install` input) still
+  tests the SOURCE TREE — PR 1 adds built testing alongside dev
+  testing, it does not replace it.
+- **PR 2 [#14715] — log grouping + failure surfacing.** Harness-owned
+  grouping fires in both non-orchestrated modes: the full-serial
+  dev run AND the built smoke leg. In the built smoke leg the corpus is
+  `smoke/` only, so grouping there is already free of the playwright
+  gap; the full-serial dev run is where the gap shows.
+- **PR 3 (this spec) — leg refinement.** Depends on both PRs merging.
+  Sequencing if merge stalls: develop stacked on the chain for CI
+  trials, but open the PR only from post-merge `main`.
 
 ## References
 
