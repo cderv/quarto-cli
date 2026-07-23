@@ -66,10 +66,12 @@ Each claim below was verified by running the exact pinned binary
    eval, so module-eval output (e.g. playwright's fixture renders)
    would fall outside a group opened there.
 4. **No custom reporter API** exists through 2.7.x (`pretty | dot |
-   junit | tap` only). `--junit-path` writes per-file/per-step XML
-   *alongside* the pretty stdout reporter, but only at run end —
-   useful for the `ci-run` analysis helper someday, useless for live
-   grouping.
+   junit | tap` only), and the tracking issue (denoland/deno#8550) was
+   closed as **not planned** — one is not coming, so console-level
+   grouping is the durable approach, not a stopgap. `--junit-path`
+   writes per-file/per-step XML *alongside* the pretty stdout reporter,
+   but only at run end — useful for the `ci-run` analysis helper
+   someday, useless for live grouping.
 5. **Custom lint plugins** (landed 2.2.0, API marked "evolving"):
    per-file scoping via `context.filename`, suppression via
    `// deno-lint-ignore <plugin>/<rule>`; denoland/std runs one in
@@ -216,7 +218,8 @@ entry + unit tests for the path derivation) → seeded-failure trial run
 - `.github/actions/merge-extension-tests/action.yml` — subtree merge +
   binary-mode skip.
 - Research sources: Deno 2.4 / 2.5 release notes (`--preload`,
-  lifecycle hooks), denoland/deno#8550 (no custom reporters),
+  lifecycle hooks), denoland/deno#8550 (custom reporters — closed as
+  not planned),
   docs.deno.com lint-plugin reference, denoland/std
   `_tools/lint_plugin.ts` + `_tools/check_*.ts`, qunitx-cli
   `deno-test-timeout.ts` (preload wrapper precedent).

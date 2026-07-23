@@ -37,10 +37,12 @@ When bumping Deno, re-check each (all verified empirically on v2.7.14,
   instrumentation or runtime guards.
 - **Lifecycle hooks** (`Deno.test.beforeAll` etc., landed 2.5.0) are
   per-file-realm and apply to raw `Deno.test` tests.
-- **Custom reporters still absent**: `--reporter` is `pretty | dot |
-  junit | tap` only (denoland/deno#8550). If a real custom-reporter API
-  ships in a later Deno, it likely supersedes chunks of the harness's
-  console-level grouping — worth reading the release notes for.
+- **Custom reporters: absent and declined** — `--reporter` is `pretty |
+  dot | junit | tap` only, and the tracking issue
+  (denoland/deno#8550) was closed as not planned. Console-level
+  grouping is therefore the sanctioned long-term approach, not a
+  stopgap. Still skim release notes for machine-readable/streaming
+  test output additions, which could matter for CI run analysis.
 - **`--junit-path` works alongside the pretty stdout reporter**
   (per-file/per-step XML at run end) — candidate input for CI run
   analysis tooling.
