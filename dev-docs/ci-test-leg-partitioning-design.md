@@ -39,6 +39,25 @@ The grouping work gives the default (non-bucketed) path one group per
   isolation on the same head (fork run 29914315152). Order-dependent
   in-process state is a real failure class today.
 
+  **Localized 2026-07-23** by comparing upstream runs on the same head
+  (0476b338f): full-serial dev run 29952972915 (36 failures/OS, 30 of
+  them the book-crossref TypeError) vs built smoke leg of run
+  29995036875 (8 failures, book family ABSENT). Mechanism: dev mode
+  renders IN-PROCESS (`runDevQuarto`, tests/quarto-cmd.ts:334 — one
+  Deno process shared by the whole suite), so unit/integration tests
+  leave module state that book post-render later trips over; binary
+  mode spawns a fresh built quarto per render, making in-process
+  contamination structurally impossible. Consequences: the book-crossref
+  family is a dev-serial-environment artifact (users never see it; the
+  built daily is inherently free of it), and its triage is narrowed to
+  "state left by unit/integration before smoke". The listings family
+  ("Unable to read listing item description/preview from <sibling>.html")
+  REPRODUCES in built mode — not in-process state; a filesystem-level
+  sibling-output dependency of single-document project renders —
+  separate triage bucket. Three failures were NEW in built mode (2
+  missing-output, 1 pdf compile) — under investigation, tracked with
+  built-version testing, not here.
+
 Purpose: *practical finding of errors* — pick the grouping that matches
 each suite's shape, and get isolation + wall-clock + budget headroom as
 side effects.
