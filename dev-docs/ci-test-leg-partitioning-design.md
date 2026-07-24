@@ -186,6 +186,28 @@ Two pieces:
   `tests/integration/`; zero interaction with `gha-grouping.ts` or the
   orchestrated gate.
 
+### Setup partitioning (finding, 2026-07-24)
+
+Corpus partitioning landed without setup partitioning: `test-smokes.yml`
+gates its six Playwright setup steps on
+`runner.os != 'Windows' || schedule || quarto-install not dev`, so every
+Linux leg installs the full Playwright stack even when its corpus
+contains no Playwright test. Observed cost: the built smoke leg of run
+30081294158 failed in `npx playwright install-deps` (transient apt
+failure) — a leg that would never run Playwright died in Playwright
+setup, while the actual Playwright leg went green on the same step in
+the same run. Fix (this design's scope, needs its own trial since the
+conditional is shared by all modes): gate those steps on "leg will run
+Playwright", computable from workflow inputs — roughly
+`contains(inputs.buckets, 'playwright') || (inputs.buckets == '' &&
+(inputs.quarto-install == 'dev' || inputs.quarto-install == ''))`
+(dev full-serial runs everything; binary-mode empty buckets defaults to
+`smoke/`). Side benefit: in `test-smokes-parallel.yml`, every bucket
+except the one containing `playwright-tests.test.ts` skips ~2–3 min of
+setup on every push. Preserve the current Windows-dev skip semantics
+when rewriting the condition, and check whether the MECA/node steps
+deserve the same treatment.
+
 ## What this buys / what it costs
 
 | | |
