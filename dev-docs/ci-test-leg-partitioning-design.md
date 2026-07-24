@@ -224,6 +224,22 @@ Left alone: the node install (needed for MECA + multiplex regardless)
 and the MECA validator step — check later whether they deserve the
 same treatment.
 
+### Per-leg status line in the step summary (idea, 2026-07-24)
+
+Today the step summary is failure-driven: a green leg writes nothing.
+That is ambiguous — an empty summary could mean "no failures" or "the
+reporting machinery never ran" (observed confusion on run 30094377084:
+green playwright/ff-matrix legs left their summaries empty). Add ONE
+always-written status line per leg — state + counts + duration, e.g.
+`✅ Playwright: 717/717 passed (8.1m)` — keeping failure detail
+failure-only (the existing L-Fn table for smoke; failing spec names +
+report-artifact link for playwright via the Leg C reporter; failing
+document/format pairs for ff-matrix). Green runs get exactly one line.
+Placement: smoke = small addition to the harness's summary flush;
+playwright = the Leg C custom reporter; ff-matrix = its runner. All
+post-merge (the smoke change touches the reporting path whose at-scale
+evidence is frozen on #14715).
+
 ## What this buys / what it costs
 
 | | |
