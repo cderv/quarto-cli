@@ -22,6 +22,13 @@ The grouping work gives the default (non-bucketed) path one group per
   self-extract (the failure path closes the group before the `FAILED`
   line) and viewer search reaches inside folds, so red-run triage works —
   but per-document navigation through the green bulk does not exist.
+  Related cosmetic quirk (observed run 30094377084, same Deno reporter
+  behavior as the playwright misattribution below): the inline failure
+  block can land in the "post-test output" region printed under the
+  NEXT document's `running` line — off by one test. Harmless for
+  triage: the block's own repro line, summary row, and `L-Fn` pointer
+  carry the correct document path; per-document groups (Leg B) shrink
+  the blast radius to one document either way.
 - **playwright**: `integration/playwright-tests.test.ts` never enters
   the grouping mechanism at all — it registers with raw `Deno.test`, not
   the harness `test()` wrapper, and renders its fixture corpus at
