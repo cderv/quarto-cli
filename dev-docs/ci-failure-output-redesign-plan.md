@@ -4,7 +4,19 @@ Status: **plan only, post-merge follow-up** to
 [#14715](https://github.com/quarto-dev/quarto-cli/pull/14715). All
 file:line references below are against that PR's branch (head
 `0476b338f`), which is the implementation baseline — `main` lacks the
-CI-reporting machinery this composes with. Companion docs:
+CI-reporting machinery this composes with. (Branch head has since
+moved to `345fc800d`; the two added commits touch only the version
+shortcode and the built workflow's version stamp, so every file:line
+reference below is unchanged.)
+
+**Decision (2026-07-24): this work does NOT fold into #14715.** Steps
+2–3 reshape the failure text that feeds `excerptSignature()` and the
+summary/annotation excerpts, which would invalidate the at-scale
+evidence posted on that PR and reopen review; the redesign also changes
+LOCAL output for every developer, a different risk class than the PR's
+additive CI machinery. It ships as its own PR from post-merge `main`
+(step 1, the repro fix, may ride earlier as a micro-commit — it leaves
+CI surfaces byte-identical). Companion docs:
 `dev-docs/ci-test-log-grouping-design.md` (CI surfaces + invariants),
 `dev-docs/ci-run-analysis-helper-design.md` (future log consumer).
 
