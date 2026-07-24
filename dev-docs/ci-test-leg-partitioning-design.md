@@ -196,17 +196,33 @@ contains no Playwright test. Observed cost: the built smoke leg of run
 30081294158 failed in `npx playwright install-deps` (transient apt
 failure) — a leg that would never run Playwright died in Playwright
 setup, while the actual Playwright leg went green on the same step in
-the same run. Fix (this design's scope, needs its own trial since the
-conditional is shared by all modes): gate those steps on "leg will run
-Playwright", computable from workflow inputs — roughly
-`contains(inputs.buckets, 'playwright') || (inputs.buckets == '' &&
-(inputs.quarto-install == 'dev' || inputs.quarto-install == ''))`
-(dev full-serial runs everything; binary-mode empty buckets defaults to
-`smoke/`). Side benefit: in `test-smokes-parallel.yml`, every bucket
-except the one containing `playwright-tests.test.ts` skips ~2–3 min of
-setup on every push. Preserve the current Windows-dev skip semantics
-when rewriting the condition, and check whether the MECA/node steps
-deserve the same treatment.
+the same run. Fix — split in two (decided 2026-07-24), following the in-tree
+precedent of the rsvg-convert step's bucket-content gate:
+
+1. **Standalone PR against main** (independent of the built-testing
+   chain): gate the six Playwright setup steps on
+   `runner.os != 'Windows' && (format('{0}', inputs.buckets) == '' ||
+   contains(inputs.buckets, 'playwright-tests.test.ts'))`. On main,
+   empty buckets always means the dev full-serial run (which needs
+   playwright), so no other input is required. Self-trialing: the PR's
+   own `test-smokes-parallel` check exercises both skip and install
+   paths (`test-smokes.yml` is not in its paths-ignore; `uses: ./…`
+   resolves from the PR merge ref). Wins: ~19 of 20 parallel buckets
+   skip ~2–3 min of setup on every push/PR, and Windows stops
+   installing browsers it can never use (`npx playwright test` never
+   runs on Windows CI — `ignore: gha.isGitHubActions() && isWindows`).
+2. **Chain adaptation** (after 1 merges, on the built-testing branch):
+   extend the empty-buckets clause with
+   `&& (inputs.quarto-install == 'dev' || inputs.quarto-install == '')`
+   — on that branch, empty buckets + built/release means the `smoke/`
+   corpus, so the built and release smoke legs skip setup too. Trialed
+   by the next `test-smokes-built.yml` dispatch.
+
+`integration/playwright-tests.test.ts` is the only `*.test.ts` path
+containing "playwright" (verified — contains() has no false matches).
+Left alone: the node install (needed for MECA + multiplex regardless)
+and the MECA validator step — check later whether they deserve the
+same treatment.
 
 ## What this buys / what it costs
 
