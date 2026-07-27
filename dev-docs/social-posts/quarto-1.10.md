@@ -21,10 +21,10 @@ Bundled tool versions, 1.9 → 1.10 (from `configuration` on each branch):
 
 ## LinkedIn
 
-1430 characters. Hook is 134 characters, so it lands above the "see more" fold on mobile too.
+1499 characters. Hook is 123 characters, so it lands above the "see more" fold on mobile too.
 No emoji, no em dashes. Link goes in the first comment (see below), not the post body.
 
-> Quarto 1.10 shipped Friday without a headline feature. The prerelease highlights page lists exactly one thing. The changelog lists 74.
+> Quarto 1.10 shipped Friday without a headline feature. The highlights page lists exactly one thing. The changelog lists 74.
 >
 > That's the kind of release I like.
 >
@@ -32,7 +32,7 @@ No emoji, no em dashes. Link goes in the first comment (see below), not the post
 >
 > None of that is a feature. But preview is a button you press twenty times an hour in Positron, so that friction is most of your experience of Quarto. It should be boring, and now it mostly is. Preview behind a proxy, in Workbench or code-server, behaves too.
 >
-> There's more in the release than we wrote. Quarto ships its own Pandoc and its own Typst, and 1.10 moves both a long way: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. Every fix those two landed since 1.9 rides along with ours. Same for TeX, which we also install for you: `quarto install tinytex` now pulls from tlnet.yihui.org, refreshed daily, not whichever CTAN mirror was stale that week.
+> There's more in the release than we wrote. Quarto ships its own Pandoc and its own Typst, and 1.10 moves both a long way: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. Every fix those two landed since 1.9 rides along with ours. Same for TeX, which we install for you: `quarto install tinytex` now pulls from tlnet.yihui.org, refreshed daily, not whichever CTAN mirror was stale that week. Same mirror R's tinytex switched to in March, so R Markdown users are already on it.
 >
 > The one piece of genuinely new work is accessibility. The built-in axe check now maps each violation to its WCAG level and sorts them by impact. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
 >
@@ -58,9 +58,13 @@ No emoji, no em dashes. Link goes in the first comment (see below), not the post
   The stale-page, `_brand.yml` and `format:` fixes are engine-side, so they land in any editor that
   drives `quarto preview` — Positron included. The draft claims the experience, not the fix, which
   is accurate. Don't tighten it into "we fixed Positron".
-- Dropped along the way: the `QUARTO_TINYTEX_REPOSITORY` override, "same default the R tinytex
-  package took in March", and the LuaLaTeX font-fallback fix. The first two are good first-comment
-  material if a LaTeX user asks why the default changed; the third is in Bluesky 5/5.
+- The R tinytex line is accurate as written: the R **tinytex** package took `tlnet.yihui.org` as its
+  default in March 2026, and R Markdown users get their TeX Live through tinytex, so they are on
+  that mirror already. Don't shorten it to "same as R Markdown" — R Markdown itself sets no CTAN
+  default; tinytex does.
+- Dropped along the way: the `QUARTO_TINYTEX_REPOSITORY` override and the LuaLaTeX font-fallback
+  fix. The override is good first-comment material if a LaTeX user asks how to point elsewhere; the
+  font fix is in Bluesky 5/5.
 - The dependency line stays generic on purpose: it claims that bumping the bundled compilers carries
   upstream's fixes to you, and nothing more. That is safe. Naming individual Typst or Pandoc
   features is not — some of them (Typst multiple bibliographies, MathML HTML export) need
@@ -71,7 +75,7 @@ No emoji, no em dashes. Link goes in the first comment (see below), not the post
   packaging and development escape hatches — conda builds use them — not a user-facing choice).
   That is a mechanism the reader did not ask about, and explaining it mid-post was what broke the
   flow in an earlier draft. Save it for a reply if someone asks.
-- 1430 characters, with room to add a sentence before the 1500 ceiling.
+- 1499 characters, at the top of the recommended band. If you add a sentence, drop one.
 - LinkedIn strips backticks — inline code renders as plain text. Check `axe: {standard: wcag21aa}`
   and the env var still read clearly.
 - Consider attaching a screenshot of the axe report overlay (WCAG badges + impact sorting). Image
@@ -82,7 +86,7 @@ No emoji, no em dashes. Link goes in the first comment (see below), not the post
 
 ## Bluesky
 
-Five posts, all within the 300-character limit (278 / 123 / 237 / 246 / 275).
+Five posts, all within the 300-character limit (278 / 123 / 237 / 246 / 279).
 
 **1/5**
 
@@ -115,10 +119,10 @@ Five posts, all within the 300-character limit (278 / 123 / 237 / 246 / 275).
 
 **5/5**
 
-> Same for TeX, which Quarto also installs for you: `quarto install tinytex` now pulls from
-> tlnet.yihui.org, refreshed daily, not whichever CTAN mirror is stale that week.
+> Same for TeX: `quarto install tinytex` now pulls from tlnet.yihui.org, refreshed daily, not
+> whichever CTAN mirror is stale that week. Same mirror R's tinytex took in March.
 >
-> And font fallbacks stopped crashing LuaLaTeX on TeX Live 2026.
+> Font fallbacks also stopped crashing LuaLaTeX on TeX Live 2026.
 >
 > quarto.org/docs/download/changelog/1.10/
 
