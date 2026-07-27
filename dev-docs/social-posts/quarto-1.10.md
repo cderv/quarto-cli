@@ -21,7 +21,7 @@ Bundled tool versions, 1.9 → 1.10 (from `configuration` on each branch):
 
 ## LinkedIn
 
-1500 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
+1499 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
 No emoji. Link goes in the first comment (see below), not the post body.
 
 > Quarto 1.10 shipped last Friday without a headline feature. The prerelease highlights page lists exactly one thing. The changelog lists 74.
@@ -34,7 +34,7 @@ No emoji. Link goes in the first comment (see below), not the post body.
 >
 > The real new work is accessibility. Quarto's built-in axe check now maps each violation to its WCAG level and sorts them by impact, so you fix the critical ones first. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
 >
-> We also move the bundled tools every release, and this one is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. That's how Typst variable fonts and Pandoc's rewritten ODT output reach you.
+> We also move the bundled tools every release, and this one is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. Whatever upstream fixed or added comes with it, nothing for you to install.
 >
 > For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a CDN-backed mirror updated daily, instead of mirror.ctan.org dropping you on whichever mirror is stale that week. Same default the R tinytex package took in March.
 >
@@ -62,10 +62,11 @@ No emoji. Link goes in the first comment (see below), not the post body.
   is accurate. Don't tighten it into "we fixed Positron".
 - Dropped to fit the Positron paragraph: the `QUARTO_TINYTEX_REPOSITORY` override and the LuaLaTeX
   font-fallback fix. Both are in the Bluesky thread if you'd rather keep them here instead.
-- The dependency claim is deliberately narrow — the bundled compilers are new, so upstream features
-  are reachable. Some of them (Typst multiple bibliographies, MathML HTML export) need Quarto-side
-  plumbing to be usable from YAML, which is why the draft names only variable fonts and the Pandoc
-  ODT rewrite. Don't broaden it without checking.
+- The dependency line stays generic on purpose: it claims that bumping the bundled compilers carries
+  upstream's fixes and new features to you, and nothing more. That is safe. Naming individual Typst
+  or Pandoc features is not — some of them (Typst multiple bibliographies, MathML HTML export) need
+  Quarto-side plumbing before you can reach them from YAML. If you do want to name one, check it
+  works through Quarto first; there is a list to pick from in the background section below.
 - 1497 characters is the top of the recommended band. If you add a sentence, drop one.
 - LinkedIn strips backticks — inline code renders as plain text. Check `axe: {standard: wcag21aa}`
   and the env var still read clearly.
@@ -77,7 +78,7 @@ No emoji. Link goes in the first comment (see below), not the post body.
 
 ## Bluesky
 
-Five posts, all within the 300-character limit (278 / 123 / 237 / 250 / 278).
+Five posts, all within the 300-character limit (278 / 123 / 237 / 223 / 278).
 
 **1/5**
 
@@ -105,8 +106,8 @@ Five posts, all within the 300-character limit (278 / 123 / 237 / 250 / 278).
 > We move the bundled tools every release. This one is a big jump: Pandoc 3.8.3 → 3.10,
 > Typst 0.14.2 → 0.15.1.
 >
-> That's how Typst variable fonts and Pandoc's rewritten ODT output reach you without installing
-> either. Plus dart-sass 1.101 and Deno 2.7.14.
+> Whatever upstream fixed or added comes with it, nothing for you to install. Plus dart-sass 1.101
+> and Deno 2.7.14.
 
 **5/5**
 
@@ -124,12 +125,12 @@ already at 278 characters.
 
 ## Background for the two added topics
 
-**Dependencies.** 1.10 crosses two Pandoc releases (3.9 and 3.10) and a Typst minor. The
-user-visible wins worth naming: Pandoc 3.10 rewrote OpenDocument/ODT output to use predefined
-styles instead of an automatic style per paragraph, so `.odt` output is finally stylable; grid
-tables can now be indented up to three spaces. Typst 0.15 brought variable fonts (`text(variations:
-…)`), multiple bibliographies, MathML in HTML export, and clearer diagnostics; 0.15.1 is a bug-fix
-patch.
+**Dependencies.** 1.10 crosses two Pandoc releases (3.9 and 3.10) and a Typst minor. The posts keep
+this generic, but if you ever want a concrete example: Pandoc 3.10 rewrote OpenDocument/ODT output
+to use predefined styles instead of an automatic style per paragraph, so `.odt` output is finally
+stylable, and grid tables can now be indented up to three spaces. Typst 0.15 brought variable fonts
+(`text(variations: …)`), multiple bibliographies, MathML in HTML export, and clearer diagnostics;
+0.15.1 is a bug-fix patch.
 
 **CTAN default** (changelog [#14538](https://github.com/quarto-dev/quarto-cli/pull/14538)). CTAN
 mirrors pick up a new TeX Live at different times, so `mirror.ctan.org` can redirect you to a mirror
