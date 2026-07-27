@@ -8,28 +8,37 @@ Links:
 - Download: <https://quarto.org/docs/download/>
 - Changelog: <https://quarto.org/docs/download/changelog/1.10/>
 
+Bundled tool versions, 1.9 → 1.10 (from `configuration` on each branch):
+
+| Tool      | 1.9    | 1.10    |
+| --------- | ------ | ------- |
+| Pandoc    | 3.8.3  | 3.10    |
+| Typst     | 0.14.2 | 0.15.1  |
+| dart-sass | 1.87.0 | 1.101.0 |
+| Deno      | 2.4.5  | 2.7.14  |
+
 ---
 
 ## LinkedIn
 
-1288 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
+1497 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
 No emoji. Link goes in the first comment (see below), not the post body.
 
 > Quarto 1.10 shipped last Friday without a headline feature. The prerelease highlights page lists exactly one thing. The changelog lists 74.
 >
 > That's the kind of release I like.
 >
-> Most of those 74 entries are small annoyances people had quietly learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
+> Most of those 74 entries are small annoyances people had learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
 >
-> None of that is a feature. All of it is friction you hit every single day.
+> None of that is a feature. All of it is friction you hit every day.
 >
-> The one piece of real new work is accessibility. Quarto's built-in axe check now tells you which WCAG level each violation maps to, and sorts them by impact so you fix the critical ones first instead of scrolling. You can scope a scan with `axe: {standard: wcag21aa}`. And axe-core is bundled now, so checking runs offline and your readers' browsers stop fetching a script from a CDN nobody asked for.
+> The real new work is accessibility. Quarto's built-in axe check now maps each violation to its WCAG level and sorts them by impact, so you fix the critical ones first. And axe-core ships inside Quarto now, so scans run offline and your readers' browsers stop fetching a script from a CDN nobody asked for.
 >
-> If you render PDFs, one to know about: font fallbacks stopped crashing LuaLaTeX on TeX Live 2026, and a missing fallback font installs itself again instead of failing the render.
+> We also move the bundled tools every release, and this one is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. That's how Typst variable fonts and Pandoc's rewritten ODT output reach you, without installing either.
 >
-> Pandoc 3.10, Typst 0.15.1 and Deno 2.7.14 come along for the ride.
+> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a CDN-backed mirror updated daily, instead of letting mirror.ctan.org drop you on whichever mirror is stale that week. Same default the R tinytex package took in March. `QUARTO_TINYTEX_REPOSITORY` still overrides it. And font fallbacks stopped crashing LuaLaTeX on TeX Live 2026.
 >
-> Changelog link in the comments.
+> Changelog in the comments.
 >
 > \#Quarto #DataScience #Accessibility #OpenSource
 
@@ -44,8 +53,13 @@ No emoji. Link goes in the first comment (see below), not the post body.
   actually yours.
 - Swap one of the preview annoyances for one you personally hit or fixed, with the detail only you
   would know. That single change does more for authenticity than everything else here.
-- LinkedIn strips backticks — the inline code above will render as plain text. Fine, but check
-  `axe: {standard: wcag21aa}` still reads clearly.
+- The dependency claim is deliberately narrow — the bundled compilers are new, so upstream features
+  are reachable. Some of them (Typst multiple bibliographies, MathML HTML export) need Quarto-side
+  plumbing to be usable from YAML, which is why the draft names only variable fonts and the Pandoc
+  ODT rewrite. Don't broaden it without checking.
+- 1497 characters is the top of the recommended band. If you add a sentence, drop one.
+- LinkedIn strips backticks — inline code renders as plain text. Check `axe: {standard: wcag21aa}`
+  and the env var still read clearly.
 - Consider attaching a screenshot of the axe report overlay (WCAG badges + impact sorting). Image
   posts want a shorter body, roughly 100–150 words, so trim to the hook plus the accessibility
   paragraph if you go that route.
@@ -54,9 +68,9 @@ No emoji. Link goes in the first comment (see below), not the post body.
 
 ## Bluesky
 
-Three posts, all within the 300-character limit (279 / 237 / 227).
+Four posts, all within the 300-character limit (279 / 237 / 250 / 278).
 
-**1/3**
+**1/4**
 
 > Quarto 1.10 shipped Friday. The highlights page lists one feature. The changelog lists 74.
 >
@@ -67,22 +81,49 @@ Three posts, all within the 300-character limit (279 / 237 / 227).
 >
 > quarto.org/docs/download/
 
-**2/3**
+**2/4**
 
 > The one piece of real new work is accessibility. The built-in axe check now maps each violation to
 > its WCAG level and sorts by impact — and axe-core is bundled, so scans run offline and readers'
 > browsers stop pulling a script from a CDN.
 
-**3/3**
+**3/4**
 
-> If you render PDFs: font fallbacks no longer crash LuaLaTeX on TeX Live 2026, and a missing
-> fallback font installs itself again.
+> We move the bundled tools every release. This one is a big jump: Pandoc 3.8.3 → 3.10,
+> Typst 0.14.2 → 0.15.1.
 >
-> Also Pandoc 3.10, Typst 0.15.1, Deno 2.7.14.
->
-> Changelog: quarto.org/docs/download/changelog/1.10/
+> That's how Typst variable fonts and Pandoc's rewritten ODT output reach you without installing
+> either. Plus dart-sass 1.101 and Deno 2.7.14.
 
-Post 1/3 works standalone if you don't want a thread.
+**4/4**
+
+> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a daily-updated CDN mirror,
+> instead of mirror.ctan.org sending you to whichever one is stale that week.
+>
+> And font fallbacks stopped crashing LuaLaTeX on TeX Live 2026.
+>
+> quarto.org/docs/download/changelog/1.10/
+
+Post 1/4 works standalone if you don't want a thread.
+
+---
+
+## Background for the two added topics
+
+**Dependencies.** 1.10 crosses two Pandoc releases (3.9 and 3.10) and a Typst minor. The
+user-visible wins worth naming: Pandoc 3.10 rewrote OpenDocument/ODT output to use predefined
+styles instead of an automatic style per paragraph, so `.odt` output is finally stylable; grid
+tables can now be indented up to three spaces. Typst 0.15 brought variable fonts (`text(variations:
+…)`), multiple bibliographies, MathML in HTML export, and clearer diagnostics; 0.15.1 is a bug-fix
+patch.
+
+**CTAN default** (changelog [#14538](https://github.com/quarto-dev/quarto-cli/pull/14538)). CTAN
+mirrors pick up a new TeX Live at different times, so `mirror.ctan.org` can redirect you to a mirror
+still serving the old snapshot — worst around the annual TeX Live release in spring, when an install
+and an update disagree about what exists. `tlnet.yihui.org` mirrors only `systems/texlive/tlnet/`,
+refreshes daily, and is served from one Cloudflare origin, so everyone sees the same state. Quarto
+falls back to `mirror.ctan.org` and then the US university mirrors when it is unreachable.
+`QUARTO_TINYTEX_REPOSITORY` or `CTAN_REPO` override it.
 
 ---
 
@@ -110,3 +151,6 @@ Sources:
 - <https://postformatter.com/linkedin-post-formatting-guide/>
 - <https://windmillgrowth.com/blogseo/how-to-write-linkedin-posts-that-dont-sound-like-ai>
 - <https://magicpost.in/blog/ai-linkedin-posts>
+- <https://github.com/jgm/pandoc/releases/tag/3.10>
+- <https://typst.app/blog/2026/typst-0.15/>
+- <https://yihui.org/en/2026/03/tinytex-ctan-mirror/>
