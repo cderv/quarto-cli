@@ -21,22 +21,20 @@ Bundled tool versions, 1.9 → 1.10 (from `configuration` on each branch):
 
 ## LinkedIn
 
-1499 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
-No emoji. Link goes in the first comment (see below), not the post body.
+1430 characters. Hook is 134 characters, so it lands above the "see more" fold on mobile too.
+No emoji, no em dashes. Link goes in the first comment (see below), not the post body.
 
-> Quarto 1.10 shipped last Friday without a headline feature. The prerelease highlights page lists exactly one thing. The changelog lists 74.
+> Quarto 1.10 shipped Friday without a headline feature. The prerelease highlights page lists exactly one thing. The changelog lists 74.
 >
 > That's the kind of release I like.
 >
-> Most are small annoyances people had learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
+> Most of the 74 are small annoyances people had learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
 >
-> None of that is a feature. But if you work in Positron, preview is a button you press twenty times an hour, so that friction is most of your experience of Quarto. It should be boring, and now it mostly is. Preview behind a proxy, in Workbench or code-server, behaves too.
+> None of that is a feature. But preview is a button you press twenty times an hour in Positron, so that friction is most of your experience of Quarto. It should be boring, and now it mostly is. Preview behind a proxy, in Workbench or code-server, behaves too.
 >
-> The real new work is accessibility. Quarto's built-in axe check now maps each violation to its WCAG level and sorts them by impact. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
+> There's more in the release than we wrote. Quarto ships its own Pandoc and its own Typst, and 1.10 moves both a long way: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. Every fix those two landed since 1.9 rides along with ours. Same for TeX, which we also install for you: `quarto install tinytex` now pulls from tlnet.yihui.org, refreshed daily, not whichever CTAN mirror was stale that week.
 >
-> We also move the bundled tools every release, and this is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. You don't pick those versions. Quarto runs what it ships, so upgrading is how upstream's fixes and new features reach you.
->
-> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a daily-updated CDN mirror, instead of mirror.ctan.org dropping you on whichever mirror is stale that week. Same default the R tinytex package took in March.
+> The one piece of genuinely new work is accessibility. The built-in axe check now maps each violation to its WCAG level and sorts them by impact. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
 >
 > Changelog in the comments.
 >
@@ -60,20 +58,20 @@ No emoji. Link goes in the first comment (see below), not the post body.
   The stale-page, `_brand.yml` and `format:` fixes are engine-side, so they land in any editor that
   drives `quarto preview` — Positron included. The draft claims the experience, not the fix, which
   is accurate. Don't tighten it into "we fixed Positron".
-- Dropped to fit the Positron paragraph: the `QUARTO_TINYTEX_REPOSITORY` override and the LuaLaTeX
-  font-fallback fix. Both are in the Bluesky thread if you'd rather keep them here instead.
+- Dropped along the way: the `QUARTO_TINYTEX_REPOSITORY` override, "same default the R tinytex
+  package took in March", and the LuaLaTeX font-fallback fix. The first two are good first-comment
+  material if a LaTeX user asks why the default changed; the third is in Bluesky 5/5.
 - The dependency line stays generic on purpose: it claims that bumping the bundled compilers carries
-  upstream's fixes and new features to you, and nothing more. That is safe. Naming individual Typst
-  or Pandoc features is not — some of them (Typst multiple bibliographies, MathML HTML export) need
+  upstream's fixes to you, and nothing more. That is safe. Naming individual Typst or Pandoc
+  features is not — some of them (Typst multiple bibliographies, MathML HTML export) need
   Quarto-side plumbing before you can reach them from YAML. If you do want to name one, check it
   works through Quarto first; there is a list to pick from in the background section below.
-- It says "you don't pick those versions", not "nothing to install", because Quarto renders with the
-  Pandoc and Typst it ships. Installing a newer Pandoc yourself does not change what Quarto uses.
-  (`QUARTO_PANDOC`, `QUARTO_TYPST` and `QUARTO_DART_SASS` do override the binaries, but those are
-  packaging and development escape hatches — conda builds use them — not a user-facing choice.) So
-  the version bump is the delivery mechanism, and staying on an old Quarto means staying on an old
-  Pandoc.
-- 1499 characters is the top of the recommended band. If you add a sentence, drop one.
+- It does not explain that installing your own Pandoc changes nothing, though that is true
+  (`QUARTO_PANDOC`, `QUARTO_TYPST` and `QUARTO_DART_SASS` override the binaries, but they are
+  packaging and development escape hatches — conda builds use them — not a user-facing choice).
+  That is a mechanism the reader did not ask about, and explaining it mid-post was what broke the
+  flow in an earlier draft. Save it for a reply if someone asks.
+- 1430 characters, with room to add a sentence before the 1500 ceiling.
 - LinkedIn strips backticks — inline code renders as plain text. Check `axe: {standard: wcag21aa}`
   and the env var still read clearly.
 - Consider attaching a screenshot of the axe report overlay (WCAG badges + impact sorting). Image
@@ -84,7 +82,7 @@ No emoji. Link goes in the first comment (see below), not the post body.
 
 ## Bluesky
 
-Five posts, all within the 300-character limit (278 / 123 / 237 / 253 / 278).
+Five posts, all within the 300-character limit (278 / 123 / 237 / 246 / 275).
 
 **1/5**
 
@@ -109,16 +107,16 @@ Five posts, all within the 300-character limit (278 / 123 / 237 / 253 / 278).
 
 **4/5**
 
-> We move the bundled tools every release. This one is a big jump: Pandoc 3.8.3 → 3.10,
-> Typst 0.14.2 → 0.15.1.
+> We move the bundled tools every release, and 1.10 is a big one: Pandoc 3.8.3 → 3.10,
+> Typst 0.14.2 → 0.15.1, plus dart-sass 1.101 and Deno 2.7.14.
 >
-> You don't pick those versions. Quarto runs what it ships, so upgrading is how upstream's fixes
-> reach you. Plus dart-sass 1.101 and Deno 2.7.14.
+> Quarto ships its own copies, so every fix those projects landed since 1.9 arrives with the
+> upgrade.
 
 **5/5**
 
-> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a daily-updated CDN mirror,
-> instead of mirror.ctan.org sending you to whichever one is stale that week.
+> Same for TeX, which Quarto also installs for you: `quarto install tinytex` now pulls from
+> tlnet.yihui.org, refreshed daily, not whichever CTAN mirror is stale that week.
 >
 > And font fallbacks stopped crashing LuaLaTeX on TeX Live 2026.
 >
