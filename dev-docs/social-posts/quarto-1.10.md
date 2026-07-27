@@ -32,11 +32,11 @@ No emoji. Link goes in the first comment (see below), not the post body.
 >
 > None of that is a feature. But if you work in Positron, preview is a button you press twenty times an hour, so that friction is most of your experience of Quarto. It should be boring, and now it mostly is. Preview behind a proxy, in Workbench or code-server, behaves too.
 >
-> The real new work is accessibility. Quarto's built-in axe check now maps each violation to its WCAG level and sorts them by impact, so you fix the critical ones first. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
+> The real new work is accessibility. Quarto's built-in axe check now maps each violation to its WCAG level and sorts them by impact. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
 >
-> We also move the bundled tools every release, and this one is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. Whatever upstream fixed or added comes with it, nothing for you to install.
+> We also move the bundled tools every release, and this is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. You don't pick those versions. Quarto runs what it ships, so upgrading is how upstream's fixes and new features reach you.
 >
-> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a CDN-backed mirror updated daily, instead of mirror.ctan.org dropping you on whichever mirror is stale that week. Same default the R tinytex package took in March.
+> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a daily-updated CDN mirror, instead of mirror.ctan.org dropping you on whichever mirror is stale that week. Same default the R tinytex package took in March.
 >
 > Changelog in the comments.
 >
@@ -67,6 +67,12 @@ No emoji. Link goes in the first comment (see below), not the post body.
   or Pandoc features is not — some of them (Typst multiple bibliographies, MathML HTML export) need
   Quarto-side plumbing before you can reach them from YAML. If you do want to name one, check it
   works through Quarto first; there is a list to pick from in the background section below.
+- It says "you don't pick those versions", not "nothing to install", because Quarto renders with the
+  Pandoc and Typst it ships. Installing a newer Pandoc yourself does not change what Quarto uses.
+  (`QUARTO_PANDOC`, `QUARTO_TYPST` and `QUARTO_DART_SASS` do override the binaries, but those are
+  packaging and development escape hatches — conda builds use them — not a user-facing choice.) So
+  the version bump is the delivery mechanism, and staying on an old Quarto means staying on an old
+  Pandoc.
 - 1497 characters is the top of the recommended band. If you add a sentence, drop one.
 - LinkedIn strips backticks — inline code renders as plain text. Check `axe: {standard: wcag21aa}`
   and the env var still read clearly.
@@ -78,7 +84,7 @@ No emoji. Link goes in the first comment (see below), not the post body.
 
 ## Bluesky
 
-Five posts, all within the 300-character limit (278 / 123 / 237 / 223 / 278).
+Five posts, all within the 300-character limit (278 / 123 / 237 / 253 / 278).
 
 **1/5**
 
@@ -106,8 +112,8 @@ Five posts, all within the 300-character limit (278 / 123 / 237 / 223 / 278).
 > We move the bundled tools every release. This one is a big jump: Pandoc 3.8.3 → 3.10,
 > Typst 0.14.2 → 0.15.1.
 >
-> Whatever upstream fixed or added comes with it, nothing for you to install. Plus dart-sass 1.101
-> and Deno 2.7.14.
+> You don't pick those versions. Quarto runs what it ships, so upgrading is how upstream's fixes
+> reach you. Plus dart-sass 1.101 and Deno 2.7.14.
 
 **5/5**
 
