@@ -1,9 +1,9 @@
 # Quarto 1.10 — social posts
 
-Source: `news/changelog-1.10.md` (74 entries) + <https://quarto.org/docs/prerelease/1.10/>.
-Stable release: **1.10.18**, published 2026-07-24.
+Source: `news/changelog-1.10.md` (74 entries) + <https://quarto.org/docs/prerelease/1.10/> (one
+highlighted feature). Stable release **1.10.18**, published Friday 2026-07-24.
 
-Links used:
+Links:
 
 - Download: <https://quarto.org/docs/download/>
 - Changelog: <https://quarto.org/docs/download/changelog/1.10/>
@@ -12,66 +12,101 @@ Links used:
 
 ## LinkedIn
 
-Quarto 1.10 is out 🎉
+1288 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
+No emoji. Link goes in the first comment (see below), not the post body.
 
-Released last week, and this one is heavy on polish — about 75 fixes and improvements across the whole toolchain. A few things worth calling out:
+> Quarto 1.10 shipped last Friday without a headline feature. The prerelease highlights page lists exactly one thing. The changelog lists 74.
+>
+> That's the kind of release I like.
+>
+> Most of those 74 entries are small annoyances people had quietly learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
+>
+> None of that is a feature. All of it is friction you hit every single day.
+>
+> The one piece of real new work is accessibility. Quarto's built-in axe check now tells you which WCAG level each violation maps to, and sorts them by impact so you fix the critical ones first instead of scrolling. You can scope a scan with `axe: {standard: wcag21aa}`. And axe-core is bundled now, so checking runs offline and your readers' browsers stop fetching a script from a CDN nobody asked for.
+>
+> If you render PDFs, one to know about: font fallbacks stopped crashing LuaLaTeX on TeX Live 2026, and a missing fallback font installs itself again instead of failing the render.
+>
+> Pandoc 3.10, Typst 0.15.1 and Deno 2.7.14 come along for the ride.
+>
+> Changelog link in the comments.
+>
+> \#Quarto #DataScience #Accessibility #OpenSource
 
-♿ Accessibility got real attention
-The built-in `axe` accessibility check matured a lot. Violations now carry their WCAG conformance level (e.g. `WCAG 2.0 AA (1.4.3)`) and are listed most-important-first, by impact. You can scope a scan to a conformance target with `axe: {standard: wcag21aa}` — including the rules axe-core keeps off by default — and toggle best-practice rules separately. axe-core is now bundled with Quarto instead of being pulled from a CDN, so checking works offline and your readers' browsers no longer phone home. The report overlay is itself keyboard-accessible, and it stopped clobbering the colors from your `_brand.yml`.
+**First comment** (post immediately after publishing):
 
-🔎 `quarto preview` is a lot less annoying
-Stale pages after editing a `.qmd` in a website or book project, a `format:` change needing a second render to take effect, a `_brand.yml` added mid-session being ignored, `BadResource` crashes on re-render, `.quarto_ipynb` files piling up on disk — all fixed. Preview behind a Posit Workbench proxy and in code-server works properly too.
+> Full changelog: https://quarto.org/docs/download/changelog/1.10/
+> Download: https://quarto.org/docs/download/
 
-📄 PDF and Typst
-Font fallbacks no longer crash LuaLaTeX on TeX Live 2026, and a missing fallback font auto-installs again instead of failing the render. Typst gets better CSS translation, brand fonts that actually reach `typst compile` in book projects, and no more `unknown font family` noise for fonts you don't have installed. `quarto install tinytex` now defaults to the CDN-backed TinyTeX mirror.
+### Things to check before posting
 
-🧰 Under the hood
-Pandoc 3.10, Typst 0.15.1, dart-sass 1.101, Deno 2.7.14. And a new `quarto.language.*` Pandoc template-variable namespace, so custom templates and partials can finally reach Quarto's resolved localized strings.
-
-Full changelog: https://quarto.org/docs/download/changelog/1.10/
-Download: https://quarto.org/docs/download/
-
-#Quarto #DataScience #RStats #Python #OpenScience #Accessibility #a11y #TechnicalWriting
+- "That's the kind of release I like" is an opinion put in your mouth. Keep it only if it is
+  actually yours.
+- Swap one of the preview annoyances for one you personally hit or fixed, with the detail only you
+  would know. That single change does more for authenticity than everything else here.
+- LinkedIn strips backticks — the inline code above will render as plain text. Fine, but check
+  `axe: {standard: wcag21aa}` still reads clearly.
+- Consider attaching a screenshot of the axe report overlay (WCAG badges + impact sorting). Image
+  posts want a shorter body, roughly 100–150 words, so trim to the hook plus the accessibility
+  paragraph if you go that route.
 
 ---
 
 ## Bluesky
 
-Thread of 3 posts (each within the 300-character limit).
+Three posts, all within the 300-character limit (279 / 237 / 227).
 
 **1/3**
 
-Quarto 1.10 is out 🎉
-
-~75 fixes and improvements. My picks:
-
-♿ built-in `axe` a11y checks matured a lot — WCAG levels, impact sorting, and fully offline now
-🔎 `quarto preview` stops serving stale pages
-📄 PDF font fallbacks fixed for TeX Live 2026
-
-quarto.org/docs/download/
+> Quarto 1.10 shipped Friday. The highlights page lists one feature. The changelog lists 74.
+>
+> Mostly small friction: preview serving stale pages, `_brand.yml` ignored until you restart,
+> `format:` changes needing a second render.
+>
+> A boring release. Best kind.
+>
+> quarto.org/docs/download/
 
 **2/3**
 
-More in 1.10:
-
-`axe: {standard: wcag21aa}` scopes a scan to a WCAG target. Typst gets better CSS translation + brand fonts in books. `quarto.language.*` exposes localized strings to custom Pandoc templates. `quarto install tinytex` uses the CDN-backed mirror.
+> The one piece of real new work is accessibility. The built-in axe check now maps each violation to
+> its WCAG level and sorts by impact — and axe-core is bundled, so scans run offline and readers'
+> browsers stop pulling a script from a CDN.
 
 **3/3**
 
-Bundled tooling moves too: Pandoc 3.10, Typst 0.15.1, dart-sass 1.101, Deno 2.7.14.
+> If you render PDFs: font fallbacks no longer crash LuaLaTeX on TeX Live 2026, and a missing
+> fallback font installs itself again.
+>
+> Also Pandoc 3.10, Typst 0.15.1, Deno 2.7.14.
+>
+> Changelog: quarto.org/docs/download/changelog/1.10/
 
-Full changelog 👇
-quarto.org/docs/download/changelog/1.10/
-
-#Quarto #DataScience
+Post 1/3 works standalone if you don't want a thread.
 
 ---
 
-## Notes / variants
+## Why these drafts look like this
 
-- If you want a single Bluesky post instead of a thread, post 1/3 alone works standalone.
-- LinkedIn: consider attaching a screenshot of the `axe` report overlay (WCAG level badges + impact
-  sorting) — it is the most visual change in the release.
-- The only feature listed on the 1.10 prerelease highlights page is the `quarto.language`
-  template-variable namespace; everything else above comes from the changelog.
+Guidance the drafts follow, from current LinkedIn writing advice:
+
+- Hook under ~210 characters (~140 on mobile) — it is all anyone sees before "see more", so it
+  carries a claim, not a greeting.
+- 1,200–1,500 characters total; engagement drops off past 1,500.
+- Line break every one or two sentences.
+- One or two emoji at most — a row of emoji section headers reads as low-effort, and it was the
+  main AI tell in the first draft.
+- Three to five hashtags. They barely matter for reach now (the feed ranks on topic modelling and
+  behaviour), so they are there for context, not discovery.
+- External links in the first comment; links in the post body cut reach.
+- Against the AI-written tells: no "thrilled to announce", concrete specifics over generic claims,
+  contractions and varied sentence length, a stated opinion, and a list of 74 rather than a tidy
+  list of five.
+
+Sources:
+
+- <https://connectsafely.ai/articles/linkedin-post-best-practices-guide-2026>
+- <https://connectsafely.ai/articles/ideal-linkedin-post-length-engagement-guide-2026>
+- <https://postformatter.com/linkedin-post-formatting-guide/>
+- <https://windmillgrowth.com/blogseo/how-to-write-linkedin-posts-that-dont-sound-like-ai>
+- <https://magicpost.in/blog/ai-linkedin-posts>
