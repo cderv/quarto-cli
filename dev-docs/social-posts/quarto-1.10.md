@@ -21,18 +21,18 @@ Bundled tool versions, 1.9 → 1.10 (from `configuration` on each branch):
 
 ## LinkedIn
 
-1499 characters. Hook is 123 characters, so it lands above the "see more" fold on mobile too.
+1500 characters. Hook is 123 characters, so it lands above the "see more" fold on mobile too.
 No emoji, no em dashes. Link goes in the first comment (see below), not the post body.
 
 > Quarto 1.10 shipped Friday without a headline feature. The highlights page lists exactly one thing. The changelog lists 74.
 >
 > That's the kind of release I like.
 >
-> Most of the 74 are small annoyances people had learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
+> Most of the 74 are small annoyances people had learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes. Not anymore.
 >
 > None of that is a feature. But preview is a button you press twenty times an hour in Positron, so that friction is most of your experience of Quarto. It should be boring, and now it mostly is. Preview behind a proxy, in Workbench or code-server, behaves too.
 >
-> There's more in the release than we wrote. Quarto ships its own Pandoc and its own Typst, and 1.10 moves both a long way: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. Every fix those two landed since 1.9 rides along with ours. Same for TeX, which we install for you: `quarto install tinytex` now pulls from tlnet.yihui.org, refreshed daily, not whichever CTAN mirror was stale that week. Same mirror R's tinytex switched to in March, so R Markdown users are already on it.
+> There's more in the release than we wrote. Quarto ships its own Pandoc and Typst, and 1.10 moves both a long way: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. Every fix those two landed since 1.9 rides along with ours. Same for TeX, which we install too: `quarto install tinytex` now pulls from tlnet.yihui.org, refreshed daily, not whichever CTAN mirror was stale that week. Same mirror R's tinytex switched to in March, so R Markdown users are already on it.
 >
 > The one piece of genuinely new work is accessibility. The built-in axe check now maps each violation to its WCAG level and sorts them by impact. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
 >
@@ -75,7 +75,15 @@ No emoji, no em dashes. Link goes in the first comment (see below), not the post
   packaging and development escape hatches — conda builds use them — not a user-facing choice).
   That is a mechanism the reader did not ask about, and explaining it mid-post was what broke the
   flow in an earlier draft. Save it for a reply if someone asks.
-- 1499 characters, at the top of the recommended band. If you add a sentence, drop one.
+- The three annoyances stay in the present tense on purpose — that vivid "steps to reproduce"
+  phrasing is the best-written part of the post — but "Not anymore." closes the loop inside the same
+  paragraph. Without it, a skimmer who stops at the paragraph break reads three present-tense bug
+  reports; the sentence that says they're fixed was 395 characters downstream. If you'd rather add
+  nothing, the alternative is putting the whole list in the past tense ("A page edit in a website
+  preview used to serve the old HTML…"), which removes all ambiguity but reads more like a changelog.
+- 1500 characters, at the ceiling. Cutting "Preview behind a proxy, in Workbench or code-server,
+  behaves too." brings it to 1434 if you want headroom — it is the weakest sentence in the post,
+  a minor item trailing after that paragraph's actual punchline.
 - LinkedIn strips backticks — inline code renders as plain text. Check `axe: {standard: wcag21aa}`
   and the env var still read clearly.
 - Consider attaching a screenshot of the axe report overlay (WCAG badges + impact sorting). Image
