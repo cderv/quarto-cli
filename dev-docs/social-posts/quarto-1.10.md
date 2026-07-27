@@ -73,7 +73,7 @@ No emoji. Link goes in the first comment (see below), not the post body.
   packaging and development escape hatches — conda builds use them — not a user-facing choice.) So
   the version bump is the delivery mechanism, and staying on an old Quarto means staying on an old
   Pandoc.
-- 1497 characters is the top of the recommended band. If you add a sentence, drop one.
+- 1499 characters is the top of the recommended band. If you add a sentence, drop one.
 - LinkedIn strips backticks — inline code renders as plain text. Check `axe: {standard: wcag21aa}`
   and the env var still read clearly.
 - Consider attaching a screenshot of the axe report overlay (WCAG badges + impact sorting). Image
