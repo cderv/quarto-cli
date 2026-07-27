@@ -21,26 +21,26 @@ Bundled tool versions, 1.9 → 1.10 (from `configuration` on each branch):
 
 ## LinkedIn
 
-1497 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
+1500 characters. Hook is 139 characters, so it lands above the "see more" fold on mobile too.
 No emoji. Link goes in the first comment (see below), not the post body.
 
 > Quarto 1.10 shipped last Friday without a headline feature. The prerelease highlights page lists exactly one thing. The changelog lists 74.
 >
 > That's the kind of release I like.
 >
-> Most of those 74 entries are small annoyances people had learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
+> Most are small annoyances people had learned to work around. Edit a page in a website preview, get served the old HTML. Add a `_brand.yml` while preview is running, watch it get ignored until you restart. Change `format:` in the frontmatter, need a second render before it takes.
 >
-> None of that is a feature. All of it is friction you hit every day.
+> None of that is a feature. But if you work in Positron, preview is a button you press twenty times an hour, so that friction is most of your experience of Quarto. It should be boring, and now it mostly is. Preview behind a proxy, in Workbench or code-server, behaves too.
 >
-> The real new work is accessibility. Quarto's built-in axe check now maps each violation to its WCAG level and sorts them by impact, so you fix the critical ones first. And axe-core ships inside Quarto now, so scans run offline and your readers' browsers stop fetching a script from a CDN nobody asked for.
+> The real new work is accessibility. Quarto's built-in axe check now maps each violation to its WCAG level and sorts them by impact, so you fix the critical ones first. And axe-core ships inside Quarto now, so scans run offline instead of pulling a script from a CDN.
 >
-> We also move the bundled tools every release, and this one is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. That's how Typst variable fonts and Pandoc's rewritten ODT output reach you, without installing either.
+> We also move the bundled tools every release, and this one is a big jump: Pandoc 3.8.3 to 3.10, Typst 0.14.2 to 0.15.1. That's how Typst variable fonts and Pandoc's rewritten ODT output reach you.
 >
-> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a CDN-backed mirror updated daily, instead of letting mirror.ctan.org drop you on whichever mirror is stale that week. Same default the R tinytex package took in March. `QUARTO_TINYTEX_REPOSITORY` still overrides it. And font fallbacks stopped crashing LuaLaTeX on TeX Live 2026.
+> For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a CDN-backed mirror updated daily, instead of mirror.ctan.org dropping you on whichever mirror is stale that week. Same default the R tinytex package took in March.
 >
 > Changelog in the comments.
 >
-> \#Quarto #DataScience #Accessibility #OpenSource
+> \#Quarto #DataScience #Positron #Accessibility
 
 **First comment** (post immediately after publishing):
 
@@ -50,9 +50,18 @@ No emoji. Link goes in the first comment (see below), not the post body.
 ### Things to check before posting
 
 - "That's the kind of release I like" is an opinion put in your mouth. Keep it only if it is
-  actually yours.
+  actually yours. Same for "twenty times an hour" — pick a number you'd actually say.
 - Swap one of the preview annoyances for one you personally hit or fixed, with the detail only you
   would know. That single change does more for authenticity than everything else here.
+- **The Positron framing is editorial, not something the changelog says.** No 1.10 entry names
+  Positron. What it names is Posit Workbench proxied preview ([#14298](https://github.com/quarto-dev/quarto-cli/issues/14298)),
+  code-server reload ([#14595](https://github.com/quarto-dev/quarto-cli/issues/14595)), and
+  RStudio's Render button shape ([#14683](https://github.com/quarto-dev/quarto-cli/issues/14683)).
+  The stale-page, `_brand.yml` and `format:` fixes are engine-side, so they land in any editor that
+  drives `quarto preview` — Positron included. The draft claims the experience, not the fix, which
+  is accurate. Don't tighten it into "we fixed Positron".
+- Dropped to fit the Positron paragraph: the `QUARTO_TINYTEX_REPOSITORY` override and the LuaLaTeX
+  font-fallback fix. Both are in the Bluesky thread if you'd rather keep them here instead.
 - The dependency claim is deliberately narrow — the bundled compilers are new, so upstream features
   are reachable. Some of them (Typst multiple bibliographies, MathML HTML export) need Quarto-side
   plumbing to be usable from YAML, which is why the draft names only variable fonts and the Pandoc
@@ -68,26 +77,30 @@ No emoji. Link goes in the first comment (see below), not the post body.
 
 ## Bluesky
 
-Four posts, all within the 300-character limit (279 / 237 / 250 / 278).
+Five posts, all within the 300-character limit (278 / 123 / 237 / 250 / 278).
 
-**1/4**
+**1/5**
 
 > Quarto 1.10 shipped Friday. The highlights page lists one feature. The changelog lists 74.
 >
-> Mostly small friction: preview serving stale pages, `_brand.yml` ignored until you restart,
-> `format:` changes needing a second render.
+> Mostly preview friction: stale pages, `_brand.yml` ignored until restart, `format:` changes
+> needing two renders. If you work in Positron, that's your whole day.
 >
 > A boring release. Best kind.
+
+**2/5**
+
+> Preview behind a proxy got fixed too — Posit Workbench and code-server both reload properly now.
 >
 > quarto.org/docs/download/
 
-**2/4**
+**3/5**
 
 > The one piece of real new work is accessibility. The built-in axe check now maps each violation to
 > its WCAG level and sorts by impact — and axe-core is bundled, so scans run offline and readers'
 > browsers stop pulling a script from a CDN.
 
-**3/4**
+**4/5**
 
 > We move the bundled tools every release. This one is a big jump: Pandoc 3.8.3 → 3.10,
 > Typst 0.14.2 → 0.15.1.
@@ -95,7 +108,7 @@ Four posts, all within the 300-character limit (279 / 237 / 250 / 278).
 > That's how Typst variable fonts and Pandoc's rewritten ODT output reach you without installing
 > either. Plus dart-sass 1.101 and Deno 2.7.14.
 
-**4/4**
+**5/5**
 
 > For LaTeX: `quarto install tinytex` now defaults to tlnet.yihui.org, a daily-updated CDN mirror,
 > instead of mirror.ctan.org sending you to whichever one is stale that week.
@@ -104,7 +117,8 @@ Four posts, all within the 300-character limit (279 / 237 / 250 / 278).
 >
 > quarto.org/docs/download/changelog/1.10/
 
-Post 1/4 works standalone if you don't want a thread.
+Post 1/5 works standalone if you don't want a thread. The download link moved to 2/5 because 1/5 is
+already at 278 characters.
 
 ---
 
