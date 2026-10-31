@@ -1,7 +1,0 @@
-schema_version: "1.1"
-name: refresh-existing-plan
-expected_outcome: |
-  The agent runs the fetch once and analyze_issues.py with --previous pointing at the
-  existing plan, and reports three lists: issues from the plan that are no longer open,
-  issues that changed milestone, issues still open and unchanged. It stops there (no plan
-  rewrite) because the user asked only for the delta.

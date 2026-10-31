@@ -1,9 +1,0 @@
-schema_version: "1.1"
-name: plan-next-release
-expected_outcome: |
-  The agent checks GitHub API access first and names the exact failure mode if any, runs
-  fetch_issues.sh once and analyze_issues.py (not ad-hoc per-label queries), reads comment
-  threads for the deferred candidates, then writes UPSTREAM_ISSUES_ANALYSIS.md following the
-  template: delta vs previous plan first, phased v1.12 plan with effort classes, Future
-  triage split into pull back / maybe / leave with quoted reasons, reference data last.
-  The final message leads with what changed and the first items to start.

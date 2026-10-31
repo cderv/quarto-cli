@@ -1,7 +1,0 @@
-schema_version: "1.1"
-name: windows-orphans-only
-expected_outcome: |
-  The agent uses the skill's fetch + analyze scripts with --areas windows,file-systems and
-  reports unassigned owner-area issues split by milestone (v1.12 vs Future), flags the
-  2022–2023 ones for re-test before scheduling, and recommends self-assignment for the recent
-  ones. It does not rewrite the whole plan document unless asked.
