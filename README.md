@@ -20,15 +20,22 @@ git clone --depth 1 --single-branch --branch skill/quarto-release-triage \
   https://github.com/cderv/quarto-cli /path/to/quarto-cli/.claude/skills/quarto-release-triage
 ```
 
-To publish a change made in a checkout of the fork (skill under
-`.claude/skills/quarto-release-triage` on a work branch):
+## Update / publish changes
+
+Edit the skill in that clone and `git push` — it is a normal branch.
+
+If instead the skill was edited inside a work branch of the fork (directory
+`.claude/skills/quarto-release-triage`, complete), rebuild and push the skill branch with:
 
 ```bash
-git subtree split --prefix=.claude/skills/quarto-release-triage -b skill/quarto-release-triage
-git push origin skill/quarto-release-triage
+.claude/skills/quarto-release-triage/scripts/publish_branch.sh --push
 ```
 
-Then in a session: "refaire le triage des issues upstream pour v1.12".
+The script replays, with `git commit-tree`, every commit of the work branch that touched
+the directory; `git subtree split` would give the same result but walks the full
+quarto-cli history (~20 min). It refuses to run if the directory is missing at HEAD,
+because it would otherwise publish a branch with only the files present in the last
+commits.
 
 ## Requirements
 
@@ -46,9 +53,3 @@ claude plugin eval . --allow-tools Write,Edit,Bash
 
 They need live GitHub API access, so run them from a machine where `gh api
 repos/quarto-dev/quarto-cli/issues?per_page=1` succeeds.
-
-## Update
-
-```bash
-git -C ~/.claude/skills/quarto-release-triage pull
-```
