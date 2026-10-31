@@ -43,10 +43,14 @@ fetch (~18 calls) but not for the comment threads. Do not burn it on retries.
 
 ## Step 2 — Fetch once, derive locally
 
+`SKILL_DIR` below is the directory holding this SKILL.md (the skill loader prints it as
+"Base directory for this skill"); the scripts live in `$SKILL_DIR/scripts`, wherever the
+skill is installed (repo `.claude/skills/`, `~/.claude/skills/`, a plugin).
+
 ```bash
 S=<scratchpad>/triage-$(date +%Y%m%d)
-.claude/skills/quarto-release-triage/scripts/fetch_issues.sh --out $S/data
-python3 -I .claude/skills/quarto-release-triage/scripts/analyze_issues.py \
+$SKILL_DIR/scripts/fetch_issues.sh --out $S/data
+python3 -I $SKILL_DIR/scripts/analyze_issues.py \
   --data $S/data --milestone v1.12 --user cderv --areas windows,file-systems \
   --previous UPSTREAM_ISSUES_ANALYSIS.md --out $S/report.md --json $S/derived.json
 ```
@@ -68,7 +72,7 @@ report lists (+1 ≥ 5 or ≥ 12 comments), the user's top assigned items, and a
 intend to call Quick or Deep, dump the thread:
 
 ```bash
-.claude/skills/quarto-release-triage/scripts/fetch_comments.sh 5961 11475 844 4677
+$SKILL_DIR/scripts/fetch_comments.sh 5961 11475 844 4677
 ```
 
 Summarize each as **Status / Story / decision** using the vocabulary and the pull-back /
