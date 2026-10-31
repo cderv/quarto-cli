@@ -4,6 +4,8 @@
 **Source**: quarto-dev/quarto-cli (public GitHub)
 **Total open issues (incl PRs)**: 1,714 | **v1.10 milestone**: 351 | **Future**: 1,354
 **Close rate**: ~3.6x creation rate (109 closed vs 30 created last 30 days)
+**Regenerate for the next release**: Claude Code skill `quarto-release-triage`, kept on branch
+`skill/quarto-release-triage` of cderv/quarto-cli — `git clone --depth 1 --single-branch --branch skill/quarto-release-triage https://github.com/cderv/quarto-cli ~/.claude/skills/quarto-release-triage`, then ask to redo the triage for the target milestone with this file as `--previous`.
 
 ---
 
