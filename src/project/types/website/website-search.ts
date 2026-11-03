@@ -158,6 +158,11 @@ export async function updateSearchIndex(
     ? Deno.readTextFileSync(searchJsonPath)
     : undefined;
 
+  console.error(
+    `SEARCHPROBE updateSearchIndex outputDir=${outputDir} incremental=${incremental} existing=${searchJson !== undefined} files=${
+      outputFiles.map((f) => f.file).join(",")
+    }`,
+  );
   // start with a set of search docs if this is incremental
   const searchDocs = new Array<SearchDoc>();
   let generateIndex = true;
@@ -195,6 +200,11 @@ export async function updateSearchIndex(
         outputFile.format.metadata[kSearch] === false ||
         (draft === true && !isDraftVisible(draftMode))
       ) {
+        console.error(
+          `SEARCHPROBE excluded ${href} search=${
+            outputFile.format.metadata[kSearch]
+          } draft=${draft} draftMode=${draftMode}`,
+        );
         updatedSearchDocs = updatedSearchDocs.filter((doc) => {
           return doc.href !== href &&
             !doc.href.startsWith(href + "#");
@@ -204,6 +214,7 @@ export async function updateSearchIndex(
 
       // if this isn't html then skip it
       if (!isHtmlFileOutput(outputFile.format.pandoc)) {
+        console.error(`SEARCHPROBE not-html ${href}`);
         continue;
       }
 
@@ -416,6 +427,9 @@ export async function updateSearchIndex(
     }
 
     // write search docs if they have changed
+    console.error(
+      `SEARCHPROBE docs=${updatedSearchDocs.length} generateIndex=${generateIndex}`,
+    );
     if (updatedSearchDocs.length > 0) {
       const updatedSearchJson = JSON.stringify(updatedSearchDocs, undefined, 2);
       if (searchJson !== updatedSearchJson) {

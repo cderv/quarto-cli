@@ -605,6 +605,11 @@ export async function bookPostRender(
 ) {
   // get web output contained in the outputFiles passed to us
   const websiteFiles = websiteOutputFiles(outputFiles);
+  console.error(
+    `SEARCHPROBE bookPostRender incremental=${incremental} outputFiles=${
+      outputFiles.map((f) => f.file).join(",")
+    } websiteFiles=${websiteFiles.length}`,
+  );
   if (websiteFiles.length > 0) {
     // fixup crossrefs and bibliography for web output
     await bookBibliographyPostRender(context, incremental, websiteFiles);
