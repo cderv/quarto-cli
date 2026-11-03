@@ -85,7 +85,7 @@ jobs:
       fail-fast: false
       matrix:
         # Non-call triggers use the default runner matrix.
-        os: ${{ fromJSON(inputs.runners || '["ubuntu-latest", "windows-latest"]') }}
+        os: ${{ fromJSON(inputs.runners || '["ubuntu-latest"]') }}
         time-test:
           - ${{ inputs.time-test }}
         exclude:

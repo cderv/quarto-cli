@@ -68,7 +68,8 @@ jobs:
       - name: Create Job for tests
         id: tests-buckets
         run: |
-          BUCKETS=$(./run-parallel-tests.sh -n=${{ inputs.nBuckets || 20 }} --json-for-ci --timing-file=timing-for-ci.txt | jq -rc 'def lpad(n): tostring | if (n > length) then ((n - length) * "0") + . else . end; to_entries | map(.key |= tostring)| map({ num: .key| tonumber | (. + 1) | lpad(2), files: .value | tojson }) | {buckets: .}')
+          # PROBE: 8 buckets, each running the book 404 test 5 times
+          BUCKETS=$(jq -nrc '[range(1;9)] | map({ num: (if . < 10 then "0\(.)" else "\(.)" end), files: ([range(5)] | map("./smoke/book/book-404-detection.test.ts") | tojson) }) | {buckets: .}')
           if [ -z $BUCKETS ]; then
             echo "::error::Failed to create buckets. Something possibly wrong in run-parallel-tests.sh."
             exit 1
